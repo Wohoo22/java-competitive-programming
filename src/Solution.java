@@ -8,13 +8,14 @@ public class Solution {
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
     private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
     private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
 
 
     private static class Config {
         static final boolean useInputFile = true;
         static final boolean useOutputFile = true;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerSolutionOutput;
+        static final String inputFile = base + "\\LeoThang\\input\\input02.txt";
+        static final String outputFile = base + "\\LeoThang\\output\\output02.txt";
     }
 
     public static void main(String[] args) throws Exception {
@@ -31,6 +32,22 @@ public class Solution {
     }
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+        int n = sc.nextInt();
+        writer.write(climbStairs(n) + "\n");
+    }
+
+    public static int climbStairs(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 2] + dp[i - 1];
+        }
+        return dp[n];
     }
 
     private static class FastScanner {

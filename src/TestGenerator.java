@@ -7,7 +7,7 @@ public class TestGenerator {
 
     private static class Config {
         static boolean useOutputFile = true;
-        static String outputFile = checkerInput;
+        static String outputFile = base + "\\LeoThang\\input\\input02.txt";
     }
 
     public static void main(String[] args) throws Exception {
@@ -19,18 +19,11 @@ public class TestGenerator {
         writer = getConsoleWriter();
         writer = getFileWriter();
 
-        int t = rndInt(100, 100);
+        int t = rndInt(46, 46);
         writer.write(t + "\n");
 
-        for (int k = 0; k < t; k++) {
-            int n = rndInt(1, 6);
-            writer.write(n + "\n");
-
-            for (int i = 0; i < n; i++) {
-                writer.write(rndInt(0, 100) + " ");
-            }
-
-            writer.write("\n");
+        for (int k = 0; k <= 45; k++) {
+            writer.write(k + "\n");
         }
         writer.flush();
     }
