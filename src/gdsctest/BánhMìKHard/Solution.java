@@ -1,21 +1,23 @@
-import java.io.*;
-import java.util.StringTokenizer;
+package gdsctest.BánhMìKHard;
 
-public class Bruteforces {
+import java.io.*;
+import java.util.*;
+
+public class Solution {
 
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String inputFile = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String outputFile = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
     private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
 
 
     private static class Config {
-        static final boolean useInputFile = true;
-        static final boolean useOutputFile = true;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerBruteforcesOutput;
+        static final boolean useInputFile = false;
+        static final boolean useOutputFile = false;
+        static final String inputFile = fileInput;
+        static final String outputFile = fileOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -26,68 +28,52 @@ public class Bruteforces {
         FastScanner sc = new FastScanner();
         int t = sc.nextInt();
         BufferedWriter writer = getWriter();
-        for (int i = 0; i < t; i++)
+        for (int i = 0; i < t; i++) {
             solve(sc, writer);
+        }
         writer.flush();
+    }
+
+    static Map<Integer, Boolean> visited;
+    static Set<Integer> ele;
+    static int close;
+    static int k;
+
+    static boolean open(int e) {
+        visited.put(e, true);
+        boolean isOpen = true;
+        if (ele.contains(e - k) && !visited.get(e - k)) {
+            if (open(e - k))
+                isOpen = false;
+        }
+        if (ele.contains(e + k) && !visited.get(e + k)) {
+            if (open(e + k))
+                isOpen = false;
+        }
+        if (!isOpen)
+            close++;
+        return isOpen;
     }
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
+        k = sc.nextInt();
         int[] a = sc.readArray(n);
-        writer.write(largestNumber(a) + "\n");
-    }
-
-    public static void calc(int n, int[] elements) {
-        if (n == 1) {
-            printArray(elements);
-        } else {
-            for (int i = 0; i < n - 1; i++) {
-                calc(n - 1, elements);
-                if (n % 2 == 0) {
-                    swap(elements, i, n - 1);
-                } else {
-                    swap(elements, 0, n - 1);
-                }
-            }
-            calc(n - 1, elements);
+        visited = new HashMap<>();
+        ele = new HashSet<>();
+        for (int i : a) {
+            visited.put(i, false);
+            ele.add(i);
         }
-    }
-
-    private static void swap(int[] input, int a, int b) {
-        int tmp = input[a];
-        input[a] = input[b];
-        input[b] = tmp;
-    }
-
-    private static void printArray(int[] input) {
-        StringBuilder ans = new StringBuilder();
-        for (int n : input)
-            ans.append(n);
-        String s = ans.toString();
-        boolean better = false;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) > max.charAt(i)) {
-                better = true;
-                break;
-            } else if (s.charAt(i) < max.charAt(i)) {
-                break;
+        int ans = 0;
+        for (int i : a) {
+            if (!visited.get(i)) {
+                close = 0;
+                open(i);
+                    ans += close;
             }
         }
-        if (better) {
-            max = s;
-        }
-    }
-
-    static String max;
-
-    public static String largestNumber(int[] nums) {
-        int length = 0;
-        for (int n : nums) {
-            length += String.valueOf(n).length();
-        }
-        max = "0".repeat(Math.max(0, length));
-        calc(nums.length, nums);
-        return max;
+        writer.write(ans + "\n");
     }
 
     private static class FastScanner {

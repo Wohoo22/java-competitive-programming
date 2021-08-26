@@ -6,8 +6,8 @@ public class Template {
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String inputFile = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String outputFile = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
 
 
     private static class Config {

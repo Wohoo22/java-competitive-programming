@@ -6,7 +6,7 @@ public class Checker {
         int testCount = 100;
         for (int i = 0; i < testCount; i++) {
             runTest();
-            System.out.println("Test " + i + " passed.");
+            System.out.println("Test " + (i + 1) + " passed.");
         }
     }
 

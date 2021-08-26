@@ -1,7 +1,9 @@
+package gdsctest.LớnNhấtCóThể;
+
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class Bruteforces {
+public class Solution {
 
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
@@ -15,7 +17,7 @@ public class Bruteforces {
         static final boolean useInputFile = true;
         static final boolean useOutputFile = true;
         static final String inputFile = checkerInput;
-        static final String outputFile = checkerBruteforcesOutput;
+        static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -37,57 +39,37 @@ public class Bruteforces {
         writer.write(largestNumber(a) + "\n");
     }
 
-    public static void calc(int n, int[] elements) {
-        if (n == 1) {
-            printArray(elements);
-        } else {
-            for (int i = 0; i < n - 1; i++) {
-                calc(n - 1, elements);
-                if (n % 2 == 0) {
-                    swap(elements, i, n - 1);
-                } else {
-                    swap(elements, 0, n - 1);
-                }
-            }
-            calc(n - 1, elements);
-        }
+    public static boolean greater(int smallerInt, int greaterInt) {
+        String smaller = String.valueOf(smallerInt);
+        String greater = String.valueOf(greaterInt);
+        return Long.parseLong(smaller + greater) < Long.parseLong(greater + smaller);
     }
-
-    private static void swap(int[] input, int a, int b) {
-        int tmp = input[a];
-        input[a] = input[b];
-        input[b] = tmp;
-    }
-
-    private static void printArray(int[] input) {
-        StringBuilder ans = new StringBuilder();
-        for (int n : input)
-            ans.append(n);
-        String s = ans.toString();
-        boolean better = false;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) > max.charAt(i)) {
-                better = true;
-                break;
-            } else if (s.charAt(i) < max.charAt(i)) {
-                break;
-            }
-        }
-        if (better) {
-            max = s;
-        }
-    }
-
-    static String max;
 
     public static String largestNumber(int[] nums) {
-        int length = 0;
-        for (int n : nums) {
-            length += String.valueOf(n).length();
+        int n = nums.length;
+        StringBuilder result = new StringBuilder();
+        boolean[] chosen = new boolean[n];
+        for (int i = 0; i < n; i++) {
+            int j = 0;
+            while (chosen[j]) j++;
+            for (int k = j + 1; k < n; k++) {
+                if (!chosen[k] && greater(nums[j], nums[k])) {
+                    j = k;
+                }
+            }
+            result.append(nums[j]);
+            chosen[j] = true;
         }
-        max = "0".repeat(Math.max(0, length));
-        calc(nums.length, nums);
-        return max;
+
+        boolean full0 = true;
+        for (int i = 0; i < result.length(); i++)
+            if (result.charAt(i) != '0')
+                full0 = false;
+
+        if (full0)
+            return "0";
+
+        return result.toString();
     }
 
     private static class FastScanner {

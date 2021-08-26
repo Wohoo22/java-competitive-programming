@@ -1,21 +1,20 @@
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class Solution {
+public class Template {
 
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String inputFile = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String outputFile = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
+    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
 
 
     private static class Config {
         static final boolean useInputFile = true;
         static final boolean useOutputFile = true;
-        static final String inputFile = base + "\\LớnNhấtCóThể\\input\\input03.txt";
-        static final String outputFile = base + "\\LớnNhấtCóThể\\output\\output03.txt";
+        static final String inputFile = checkerInput;
+        static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -32,42 +31,6 @@ public class Solution {
     }
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int n = sc.nextInt();
-        int[] a = sc.readArray(n);
-        writer.write(largestNumber(a) + "\n");
-    }
-
-    public static boolean greater(int smallerInt, int greaterInt) {
-        String smaller = String.valueOf(smallerInt);
-        String greater = String.valueOf(greaterInt);
-        return Long.parseLong(smaller + greater) < Long.parseLong(greater + smaller);
-    }
-
-    public static String largestNumber(int[] nums) {
-        int n = nums.length;
-        StringBuilder result = new StringBuilder();
-        boolean[] chosen = new boolean[n];
-        for (int i = 0; i < n; i++) {
-            int j = 0;
-            while (chosen[j]) j++;
-            for (int k = j + 1; k < n; k++) {
-                if (!chosen[k] && greater(nums[j], nums[k])) {
-                    j = k;
-                }
-            }
-            result.append(nums[j]);
-            chosen[j] = true;
-        }
-
-        boolean full0 = true;
-        for (int i = 0; i < result.length(); i++)
-            if (result.charAt(i) != '0')
-                full0 = false;
-
-        if (full0)
-            return "0";
-
-        return result.toString();
     }
 
     private static class FastScanner {
