@@ -14,8 +14,8 @@ public class Solution {
     private static class Config {
         static final boolean useInputFile = true;
         static final boolean useOutputFile = true;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerSolutionOutput;
+        static final String inputFile = base + "\\ChuỗiDàiNhất\\input\\input04.txt";
+        static final String outputFile = base + "\\ChuỗiDàiNhất\\output\\output04.txt";
     }
 
     public static void main(String[] args) throws Exception {
