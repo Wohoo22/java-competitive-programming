@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Bruteforces {
@@ -6,8 +8,8 @@ public class Bruteforces {
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String inputFile = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String outputFile = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
     private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
 
 
@@ -33,61 +35,31 @@ public class Bruteforces {
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        int[] a = sc.readArray(n);
-        writer.write(largestNumber(a) + "\n");
+        String s = sc.next();
+        writer.write(lengthOfLongestSubstring(s, n) + "\n");
     }
 
-    public static void calc(int n, int[] elements) {
-        if (n == 1) {
-            printArray(elements);
-        } else {
-            for (int i = 0; i < n - 1; i++) {
-                calc(n - 1, elements);
-                if (n % 2 == 0) {
-                    swap(elements, i, n - 1);
-                } else {
-                    swap(elements, 0, n - 1);
+    public static int lengthOfLongestSubstring(String s, int n) {
+        int ans = 0;
+        for (int len = 1; len <= n; len++) {
+            for (int i = 0; i < n; i++) {
+                int j = i + len - 1;
+                if (j >= n)
+                    break;
+                Set<Character> exist = new HashSet<>();
+                boolean flag = true;
+                for (int k = i; k <= j; k++) {
+                    if (exist.contains(s.charAt(k))) {
+                        flag = false;
+                        break;
+                    }
+                    exist.add(s.charAt(k));
                 }
-            }
-            calc(n - 1, elements);
-        }
-    }
-
-    private static void swap(int[] input, int a, int b) {
-        int tmp = input[a];
-        input[a] = input[b];
-        input[b] = tmp;
-    }
-
-    private static void printArray(int[] input) {
-        StringBuilder ans = new StringBuilder();
-        for (int n : input)
-            ans.append(n);
-        String s = ans.toString();
-        boolean better = false;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) > max.charAt(i)) {
-                better = true;
-                break;
-            } else if (s.charAt(i) < max.charAt(i)) {
-                break;
+                if (flag)
+                    ans = Math.max(ans, len);
             }
         }
-        if (better) {
-            max = s;
-        }
-    }
-
-    static String max;
-
-    public static String largestNumber(int[] nums) {
-        int length = 0;
-        for (int n : nums) {
-            length += String.valueOf(n).length();
-        }
-        max = "0".repeat(Math.max(0, length));
-        calc(nums.length, nums);
-        return max;
+        return ans;
     }
 
     private static class FastScanner {

@@ -14,8 +14,8 @@ public class Solution {
     private static class Config {
         static final boolean useInputFile = true;
         static final boolean useOutputFile = true;
-        static final String inputFile = base + "\\LeoThang\\input\\input02.txt";
-        static final String outputFile = base + "\\LeoThang\\output\\output02.txt";
+        static final String inputFile = checkerInput;
+        static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -33,21 +33,29 @@ public class Solution {
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        writer.write(climbStairs(n) + "\n");
+        String s = sc.next();
+        writer.write(lengthOfLongestSubstring(s, n) + "\n");
     }
 
-    public static int climbStairs(int n) {
-        if (n == 0) return 0;
-        if (n == 1) return 1;
-        if (n == 2) return 2;
-        int[] dp = new int[n + 1];
-        dp[0] = 0;
-        dp[1] = 1;
-        dp[2] = 2;
-        for (int i = 3; i <= n; i++) {
-            dp[i] = dp[i - 2] + dp[i - 1];
+    public static int lengthOfLongestSubstring(String s, int n) {
+        boolean[] exist = new boolean[26];
+        int ans = 0;
+        int i = 0;
+        int j = -1;
+        while (i < n) {
+            int c = s.charAt(i) - 'a';
+            exist[c] = true;
+            if (j <= i)
+                j = i + 1;
+            while (j < n && !exist[s.charAt(j) - 'a']) {
+                exist[s.charAt(j) - 'a'] = true;
+                j++;
+            }
+            ans = Math.max(ans, j - i);
+            exist[c] = false;
+            i++;
         }
-        return dp[n];
+        return ans;
     }
 
     private static class FastScanner {
