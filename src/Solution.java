@@ -6,16 +6,16 @@ public class Solution {
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String inputFile = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String outputFile = System.getProperty("user.dir") + "\\src\\_in";
     private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
 
 
     private static class Config {
         static final boolean useInputFile = true;
         static final boolean useOutputFile = true;
-        static final String inputFile = base + "\\ChuỗiDàiNhất\\input\\input04.txt";
-        static final String outputFile = base + "\\ChuỗiDàiNhất\\output\\output04.txt";
+        static final String inputFile = base + "\\NénChuỗi\\input\\input04.txt";
+        static final String outputFile = base + "\\NénChuỗi\\output\\output04.txt";
     }
 
     public static void main(String[] args) throws Exception {
@@ -34,28 +34,20 @@ public class Solution {
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
         String s = sc.next();
-        writer.write(lengthOfLongestSubstring(s, n) + "\n");
-    }
-
-    public static int lengthOfLongestSubstring(String s, int n) {
-        boolean[] exist = new boolean[26];
-        int ans = 0;
+        StringBuilder result = new StringBuilder();
         int i = 0;
-        int j = -1;
         while (i < n) {
-            int c = s.charAt(i) - 'a';
-            exist[c] = true;
-            if (j <= i)
-                j = i + 1;
-            while (j < n && !exist[s.charAt(j) - 'a']) {
-                exist[s.charAt(j) - 'a'] = true;
+            int j = i + 1;
+            while (j < n && s.charAt(j) == s.charAt(i))
                 j++;
-            }
-            ans = Math.max(ans, j - i);
-            exist[c] = false;
-            i++;
+            result.append(s.charAt(i)).append(j - i);
+            i = j;
         }
-        return ans;
+        if (result.length() >= n)
+            writer.write(s + "\n");
+        else {
+            writer.write(result.toString() + "\n");
+        }
     }
 
     private static class FastScanner {
