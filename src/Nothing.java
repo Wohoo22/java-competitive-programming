@@ -1,43 +1,34 @@
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class Solution {
+public class Nothing {
 
-    private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
-    private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
-
-
-    private static class Config {
-        static final boolean useInputFile = true;
-        static final boolean useOutputFile = false;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerSolutionOutput;
-    }
 
     public static void main(String[] args) {
-        try {
-            run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        run();
     }
 
-    public static void run() throws Exception {
+    public static void run() {
         FastScanner sc = new FastScanner();
         int t = 1;
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
-        writer.flush();
+        try {
+            writer.flush();
+        } catch (Exception ignored) {
+
+        }
     }
 
-    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+    public static void solve(FastScanner sc, BufferedWriter writer) {
         int n = sc.nextInt();
         long k = sc.nextLong();
-        sc.close();
+        try {
+            sc.close();
+        } catch (Exception ignored) {
+
+        }
         long[] dp = new long[n + 1];
         long sum = 1;
         dp[1] = 1;
@@ -55,8 +46,11 @@ public class Solution {
                 dp[x] %= k;
             }
         }
+        try {
+            writer.write(dp[n] + "\n");
+        } catch (Exception ignored) {
 
-        writer.write(dp[n] + "\n");
+        }
     }
 
     private static class FastScanner {
@@ -64,11 +58,8 @@ public class Solution {
         BufferedReader br;
         StringTokenizer st;
 
-        private FastScanner() throws FileNotFoundException {
-            if (Config.useInputFile)
-                this.br = new BufferedReader(new InputStreamReader(new FileInputStream(Config.inputFile)));
-            else
-                this.br = new BufferedReader(new InputStreamReader(System.in));
+        private FastScanner() {
+            this.br = new BufferedReader(new InputStreamReader(System.in));
             this.st = new StringTokenizer("");
         }
 
@@ -101,17 +92,8 @@ public class Solution {
         }
     }
 
-    private static BufferedWriter getWriter() throws Exception {
-        if (Config.useOutputFile)
-            return getFileWriter();
+    private static BufferedWriter getWriter() {
         return getConsoleWriter();
-    }
-
-    private static BufferedWriter getFileWriter() throws Exception {
-        PrintWriter writer = new PrintWriter(Config.outputFile);
-        writer.print("");
-        writer.close();
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(Config.outputFile)));
     }
 
     private static BufferedWriter getConsoleWriter() {

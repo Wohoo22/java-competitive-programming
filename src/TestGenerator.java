@@ -3,11 +3,10 @@ import java.util.Random;
 
 public class TestGenerator {
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
-    private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
 
     private static class Config {
         static boolean useOutputFile = true;
-        static String outputFile = base + "\\ChuỗiDàiNhất\\input\\input04.txt";
+        static String outputFile = checkerInput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -18,18 +17,9 @@ public class TestGenerator {
         BufferedWriter writer;
         writer = getWriter();
 
-        int t = rndInt(10000, 10000);
-        writer.write(t + "\n");
+        int t = rndInt(1, 1000);
+        writer.write(t + " " + 998244353);
 
-        for (int k = 0; k < t; k++) {
-
-            int n = rndInt(1, 20);
-            writer.write(n + "\n");
-            for (int i = 0; i < n; i++) {
-                writer.write(rndChar());
-            }
-            writer.write("\n");
-        }
         writer.flush();
     }
 

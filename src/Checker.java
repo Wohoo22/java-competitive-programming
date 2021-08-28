@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Checker {
     public static void main(String[] args) throws Exception {
-        int testCount = 100;
+        int testCount = 1000;
         for (int i = 0; i < testCount; i++) {
             runTest();
             System.out.println("Test " + (i + 1) + " passed.");

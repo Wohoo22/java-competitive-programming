@@ -1,6 +1,4 @@
 import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Bruteforces {
@@ -26,7 +24,7 @@ public class Bruteforces {
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = sc.nextInt();
+        int t = 1;
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
@@ -35,31 +33,21 @@ public class Bruteforces {
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        String s = sc.next();
-        writer.write(lengthOfLongestSubstring(s, n) + "\n");
-    }
-
-    public static int lengthOfLongestSubstring(String s, int n) {
-        int ans = 0;
-        for (int len = 1; len <= n; len++) {
-            for (int i = 0; i < n; i++) {
-                int j = i + len - 1;
-                if (j >= n)
-                    break;
-                Set<Character> exist = new HashSet<>();
-                boolean flag = true;
-                for (int k = i; k <= j; k++) {
-                    if (exist.contains(s.charAt(k))) {
-                        flag = false;
-                        break;
-                    }
-                    exist.add(s.charAt(k));
-                }
-                if (flag)
-                    ans = Math.max(ans, len);
+        long k = sc.nextLong();
+        long[] dp = new long[n + 1];
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int x = 3; x <= n; x++) {
+            for (int y = 1; y < x; y++) {
+                dp[x] += dp[x - y];
+                dp[x] %= k;
+            }
+            for (int z = 2; z <= x; z++) {
+                dp[x] += dp[Math.floorDiv(x, z)];
+                dp[x] %= k;
             }
         }
-        return ans;
+        writer.write(dp[n] + "\n");
     }
 
     private static class FastScanner {
