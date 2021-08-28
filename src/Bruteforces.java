@@ -32,22 +32,7 @@ public class Bruteforces {
     }
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int n = sc.nextInt();
-        long k = sc.nextLong();
-        long[] dp = new long[n + 1];
-        dp[1] = 1;
-        dp[2] = 2;
-        for (int x = 3; x <= n; x++) {
-            for (int y = 1; y < x; y++) {
-                dp[x] += dp[x - y];
-                dp[x] %= k;
-            }
-            for (int z = 2; z <= x; z++) {
-                dp[x] += dp[Math.floorDiv(x, z)];
-                dp[x] %= k;
-            }
-        }
-        writer.write(dp[n] + "\n");
+
     }
 
     private static class FastScanner {

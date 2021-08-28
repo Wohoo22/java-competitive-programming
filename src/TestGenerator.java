@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class TestGenerator {
@@ -6,7 +8,7 @@ public class TestGenerator {
 
     private static class Config {
         static boolean useOutputFile = true;
-        static String outputFile = checkerInput;
+        static String outputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\input\\input05.txt";
     }
 
     public static void main(String[] args) throws Exception {
@@ -17,8 +19,28 @@ public class TestGenerator {
         BufferedWriter writer;
         writer = getWriter();
 
-        int t = rndInt(1, 1000);
-        writer.write(t + " " + 998244353);
+        int t = rndInt(1, 1);
+        writer.write(t + "\n");
+        for (int k = 0; k < t; k++) {
+            int n = rndInt(1000000, 1000000);
+            writer.write(n + "\n");
+            int blank = rndInt(1, n - 1);
+            List<Character> chars = new ArrayList<>();
+            for (int i = 0; i < blank; i++)
+                chars.add(' ');
+            for (int i = 0; i < n - blank; i++) {
+                chars.add((char) ('a' + rndInt(0, 25)));
+            }
+            for (int i = 0; i < chars.size(); i++) {
+                int j = rndInt(0, chars.size() - 1);
+                char tmp = chars.get(j);
+                chars.set(j, chars.get(i));
+                chars.set(i, tmp);
+            }
+            for (char c : chars)
+                writer.write(c);
+            writer.write("\n");
+        }
 
         writer.flush();
     }

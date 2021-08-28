@@ -12,22 +12,18 @@ public class Solution {
 
     private static class Config {
         static final boolean useInputFile = true;
-        static final boolean useOutputFile = false;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerSolutionOutput;
+        static final boolean useOutputFile = true;
+        static final String inputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\input\\input05.txt";
+        static final String outputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\output\\output05.txt";
     }
 
-    public static void main(String[] args) {
-        try {
-            run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws Exception {
+        run();
     }
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = 1;
+        int t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
@@ -36,27 +32,30 @@ public class Solution {
 
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        long k = sc.nextLong();
-        sc.close();
-        long[] dp = new long[n + 1];
-        long sum = 1;
-        dp[1] = 1;
-        dp[2] = 2;
-        for (int x = 3; x <= n; x++) {
-            sum += dp[x - 1];
-            sum %= k;
-            dp[x] += sum;
-            for (int z = 2; z <= (int) (Math.ceil(Math.sqrt(x))); z++) {
-                dp[x] += dp[Math.floorDiv(x, z)];
-                dp[x] %= k;
-            }
-            for (int z = (int) (Math.ceil(Math.sqrt(x)) + 1); z <= x; z++) {
-                dp[x] += dp[Math.floorDiv(x, z)];
-                dp[x] %= k;
+        String s = sc.nextLine();
+        writer.write(calc(s) + "\n");
+    }
+
+    public static String calc(String s) {
+        int n = s.length();
+        StringBuilder result = new StringBuilder();
+        int l = 0;
+        int r = s.length() - 1;
+        while (l < n && s.charAt(l) == ' ')
+            l++;
+        while (r >= 0 && s.charAt(r) == ' ')
+            r--;
+        while (l <= r) {
+            if (s.charAt(l) != ' ') {
+                result.append(s.charAt(l));
+                l++;
+            } else {
+                while (l <= r && s.charAt(l) == ' ')
+                    l++;
+                result.append('%');
             }
         }
-
-        writer.write(dp[n] + "\n");
+        return result.toString();
     }
 
     private static class FastScanner {
@@ -72,10 +71,6 @@ public class Solution {
             this.st = new StringTokenizer("");
         }
 
-        void close() throws IOException {
-            br.close();
-        }
-
         String next() {
             while (!st.hasMoreTokens())
                 try {
@@ -84,6 +79,15 @@ public class Solution {
                     e.printStackTrace();
                 }
             return st.nextToken();
+        }
+
+        String nextLine() {
+            try {
+                return br.readLine();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "Error";
         }
 
         int nextInt() {
