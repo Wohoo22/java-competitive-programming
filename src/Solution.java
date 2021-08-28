@@ -12,9 +12,9 @@ public class Solution {
 
     private static class Config {
         static final boolean useInputFile = true;
-        static final boolean useOutputFile = true;
-        static final String inputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\input\\input05.txt";
-        static final String outputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\output\\output05.txt";
+        static final boolean useOutputFile = false;
+        static final String inputFile = fileInput;
+        static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -30,32 +30,43 @@ public class Solution {
         writer.flush();
     }
 
-    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int n = sc.nextInt();
-        String s = sc.nextLine();
-        writer.write(calc(s) + "\n");
+    public static int mod(char c, int zeros, int N) {
+        String num = c + "0".repeat(Math.max(0, zeros));
+        int res = 0;
+        for (int i = 0; i < num.length(); i++)
+            res = (res * 10 + (int) num.charAt(i) - '0') % N;
+        return res;
     }
 
-    public static String calc(String s) {
-        int n = s.length();
-        StringBuilder result = new StringBuilder();
-        int l = 0;
-        int r = s.length() - 1;
-        while (l < n && s.charAt(l) == ' ')
-            l++;
-        while (r >= 0 && s.charAt(r) == ' ')
-            r--;
-        while (l <= r) {
-            if (s.charAt(l) != ' ') {
-                result.append(s.charAt(l));
-                l++;
-            } else {
-                while (l <= r && s.charAt(l) == ' ')
-                    l++;
-                result.append('%');
+    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+        int M = sc.nextInt();
+        int N = sc.nextInt();
+        String S = sc.next();
+        long[][][] dp = new long[M][N][M + 1];
+        dp[M - 1][(S.charAt(M - 1) - '0') % N][1] = 1;
+        for (int i = M - 2; i >= 0; i--) {
+            for (int j = 0; j < N; j++) {
+                for (int k = 1; k <= M - i; k++) {
+                    if (k == 1 && (S.charAt(i) - '0') % N == j) {
+                        dp[i][j][k] = 1;
+                        continue;
+                    }
+                    int c = N + j - mod(S.charAt(i), k - 1, N);
+                    c %= N;
+                    for (int p = i + 1; p < M; p++)
+                        dp[i][j][k] += dp[p][c][k - 1];
+//                    System.out.println("i,j,k " + i + "," + j + "," + k);
+//                    System.out.println("dp is " + dp[i][j][k]);
+                }
             }
         }
-        return result.toString();
+        long ans = 0;
+        for (int i = 0; i < M; i++) {
+            for (int k = 1; k <= M - i; k++) {
+                ans += dp[i][0][k];
+            }
+        }
+        writer.write(ans + "\n");
     }
 
     private static class FastScanner {
@@ -79,15 +90,6 @@ public class Solution {
                     e.printStackTrace();
                 }
             return st.nextToken();
-        }
-
-        String nextLine() {
-            try {
-                return br.readLine();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "Error";
         }
 
         int nextInt() {

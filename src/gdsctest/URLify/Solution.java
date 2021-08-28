@@ -13,8 +13,8 @@ public class Solution {
 
 
     private static class Config {
-        static final boolean useInputFile = true;
-        static final boolean useOutputFile = true;
+        static final boolean useInputFile = false;
+        static final boolean useOutputFile = false;
         static final String inputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\input\\input05.txt";
         static final String outputFile = System.getProperty("user.dir") + "\\src\\gdsctest\\URLify\\output\\output05.txt";
     }
