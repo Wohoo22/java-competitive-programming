@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Bruteforces {
@@ -24,15 +26,40 @@ public class Bruteforces {
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = 1;
+        int t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
-    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+    static List<String> subsq;
 
+    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+        int M = sc.nextInt();
+        int N = sc.nextInt();
+        String S = sc.next();
+        subsq = new ArrayList<>();
+        findsubsequences(S, "");
+        int ans = 0;
+        for (String s : subsq) {
+            if (s.equals(""))
+                continue;
+            int num = Integer.parseInt(s);
+            if (num % N == 0)
+                ans++;
+        }
+        writer.write(ans + "\n");
+    }
+
+    private static void findsubsequences(String s,
+                                         String ans) {
+        if (s.length() == 0) {
+            subsq.add(ans);
+            return;
+        }
+        findsubsequences(s.substring(1), ans + s.charAt(0));
+        findsubsequences(s.substring(1), ans);
     }
 
     private static class FastScanner {

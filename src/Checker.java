@@ -31,6 +31,8 @@ public class Checker {
             if (!bruteforcesResult.equals(solutionResult))
                 throw new Bug(makeMessage(line, bruteforcesResult, solutionResult));
             line++;
+            System.out.println("Solution: " + solutionResult);
+            System.out.println("Bruteforces: " + bruteforcesResult);
         }
         if (solutionScanner.hasNext()) {
             throw new Bug("Solution has more line than bruteforces.");

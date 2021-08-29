@@ -12,8 +12,8 @@ public class Solution {
 
     private static class Config {
         static final boolean useInputFile = true;
-        static final boolean useOutputFile = false;
-        static final String inputFile = fileInput;
+        static final boolean useOutputFile = true;
+        static final String inputFile = checkerInput;
         static final String outputFile = checkerSolutionOutput;
     }
 
@@ -42,6 +42,14 @@ public class Solution {
         int M = sc.nextInt();
         int N = sc.nextInt();
         String S = sc.next();
+
+        int[][] mods = new int[M][M];
+        for (int i=0; i<M; i++) {
+            for (int j=0; j<M; j++) {
+                mods[i][j] = mod(S.charAt(i), j, N);
+            }
+        }
+
         long[][][] dp = new long[M][N][M + 1];
         dp[M - 1][(S.charAt(M - 1) - '0') % N][1] = 1;
         for (int i = M - 2; i >= 0; i--) {
@@ -51,7 +59,7 @@ public class Solution {
                         dp[i][j][k] = 1;
                         continue;
                     }
-                    int c = N + j - mod(S.charAt(i), k - 1, N);
+                    int c = N + j - mods[i][k-1];
                     c %= N;
                     for (int p = i + 1; p < M; p++)
                         dp[i][j][k] += dp[p][c][k - 1];
