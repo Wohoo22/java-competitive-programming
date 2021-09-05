@@ -122,6 +122,78 @@ public class Template {
                     )
             );
         }
+
+        public CustomBigInteger subtract(String value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(int value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(long value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(String value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(int value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(long value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
     }
 
     private static class FastScanner {
