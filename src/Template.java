@@ -75,6 +75,14 @@ public class Template {
             return this.value.compareTo(value.value) > 0;
         }
 
+        public boolean greaterThanOrEqual(CustomBigInteger value) {
+            return this.greaterThan(value) || this.equal(value);
+        }
+
+        public boolean lessThanOrEqual(CustomBigInteger value) {
+            return this.lessThan(value) || this.equal(value);
+        }
+
         public static CustomBigInteger max(CustomBigInteger a, CustomBigInteger b) {
             if (a.greaterThan(b))
                 return a;
