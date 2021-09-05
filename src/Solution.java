@@ -11,10 +11,10 @@ public class Solution {
 
 
     private static class Config {
-        static final boolean useInputFile = true;
-        static final boolean useOutputFile = true;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerSolutionOutput;
+        private static final boolean useInputFile = true;
+        private static final boolean useOutputFile = true;
+        private static final String inputFile = checkerInput;
+        private static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -23,58 +23,21 @@ public class Solution {
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = sc.nextInt();
+        int t = 1;
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
-    public static int mod(char c, int zeros, int N) {
-        String num = c + "0".repeat(Math.max(0, zeros));
-        int res = 0;
-        for (int i = 0; i < num.length(); i++)
-            res = (res * 10 + (int) num.charAt(i) - '0') % N;
-        return res;
+    private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+        int n = sc.nextInt();
+        int x = sc.nextInt();
+        int[] d = new int[n + 1];
     }
 
-    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int M = sc.nextInt();
-        int N = sc.nextInt();
-        String S = sc.next();
+    private static class CustomBigInteger {
 
-        int[][] mods = new int[M][M];
-        for (int i=0; i<M; i++) {
-            for (int j=0; j<M; j++) {
-                mods[i][j] = mod(S.charAt(i), j, N);
-            }
-        }
-
-        long[][][] dp = new long[M][N][M + 1];
-        dp[M - 1][(S.charAt(M - 1) - '0') % N][1] = 1;
-        for (int i = M - 2; i >= 0; i--) {
-            for (int j = 0; j < N; j++) {
-                for (int k = 1; k <= M - i; k++) {
-                    if (k == 1 && (S.charAt(i) - '0') % N == j) {
-                        dp[i][j][k] = 1;
-                        continue;
-                    }
-                    int c = N + j - mods[i][k-1];
-                    c %= N;
-                    for (int p = i + 1; p < M; p++)
-                        dp[i][j][k] += dp[p][c][k - 1];
-//                    System.out.println("i,j,k " + i + "," + j + "," + k);
-//                    System.out.println("dp is " + dp[i][j][k]);
-                }
-            }
-        }
-        long ans = 0;
-        for (int i = 0; i < M; i++) {
-            for (int k = 1; k <= M - i; k++) {
-                ans += dp[i][0][k];
-            }
-        }
-        writer.write(ans + "\n");
     }
 
     private static class FastScanner {

@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.util.StringTokenizer;
 
 public class Template {
@@ -11,10 +12,10 @@ public class Template {
 
 
     private static class Config {
-        static final boolean useInputFile = true;
-        static final boolean useOutputFile = true;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerSolutionOutput;
+        private static final boolean useInputFile = true;
+        private static final boolean useOutputFile = true;
+        private static final String inputFile = checkerInput;
+        private static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -30,7 +31,97 @@ public class Template {
         writer.flush();
     }
 
-    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+    private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+    }
+
+    private static class CustomBigInteger {
+        private final BigInteger value;
+
+        public CustomBigInteger(int value) {
+            this.value = new BigInteger(String.valueOf(value));
+        }
+
+
+        public CustomBigInteger(String value) {
+            this.value = new BigInteger(value);
+        }
+
+        public CustomBigInteger(long value) {
+            this.value = new BigInteger(String.valueOf(value));
+        }
+
+        public CustomBigInteger(CustomBigInteger value) {
+            this.value = new BigInteger(value.toString());
+        }
+
+        public CustomBigInteger(BigInteger value) {
+            this.value = new BigInteger(value.toString());
+        }
+
+        @Override
+        public String toString() {
+            return this.value.toString();
+        }
+
+        public boolean lessThan(CustomBigInteger value) {
+            return this.value.compareTo(value.value) < 0;
+        }
+
+        public boolean equal(CustomBigInteger value) {
+            return this.value.compareTo(value.value) == 0;
+        }
+
+        public boolean greaterThan(CustomBigInteger value) {
+            return this.value.compareTo(value.value) > 0;
+        }
+
+        public static CustomBigInteger max(CustomBigInteger a, CustomBigInteger b) {
+            if (a.greaterThan(b))
+                return a;
+            return b;
+        }
+
+        public static CustomBigInteger min(CustomBigInteger a, CustomBigInteger b) {
+            if (a.lessThan(b))
+                return a;
+            return b;
+        }
+
+        public CustomBigInteger add(String value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger add(int value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger add(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger add(long value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
     }
 
     private static class FastScanner {

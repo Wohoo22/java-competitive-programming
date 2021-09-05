@@ -13,7 +13,7 @@ public class Checker {
     private static void runTest() throws Exception {
         TestGenerator.run();
         Solution.run();
-        Bruteforces.run();
+        Bruteforce.run();
         File bruteforcesOutputFile = new File(System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out");
         File solutionOutputFile = new File(System.getProperty("user.dir") + "\\src\\_checker.solution.out");
         Scanner bruteforcesScanner = new Scanner(bruteforcesOutputFile);
@@ -31,8 +31,8 @@ public class Checker {
             if (!bruteforcesResult.equals(solutionResult))
                 throw new Bug(makeMessage(line, bruteforcesResult, solutionResult));
             line++;
-            System.out.println("Solution: " + solutionResult);
-            System.out.println("Bruteforces: " + bruteforcesResult);
+//            System.out.println("Solution: " + solutionResult);
+//            System.out.println("Bruteforces: " + bruteforcesResult);
         }
         if (solutionScanner.hasNext()) {
             throw new Bug("Solution has more line than bruteforces.");

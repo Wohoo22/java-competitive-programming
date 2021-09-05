@@ -17,15 +17,14 @@ public class TestGenerator {
         BufferedWriter writer;
         writer = getWriter();
 
-        int t = rndInt(1, 1);
+        int t = rndInt(1, 100);
         writer.write(t + "\n");
-        for (int k = 0; k < t; k++) {
-            int n = rndInt(50, 50);
-            writer.write(n + " ");
-            int m = rndInt(1, 100);
-            writer.write(m + "\n");
+        for (int v = 0; v < t; v++) {
+            int n = rndInt(1, 20);
+            int k = rndInt(1, 20);
+            writer.write(n + " " + k + "\n");
             for (int i = 0; i < n; i++) {
-                writer.write('0' + rndInt(0, 9));
+                writer.write(rndInt(-1000, 1000) + " ");
             }
             writer.write("\n");
         }

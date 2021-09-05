@@ -3,14 +3,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Bruteforces {
+public class Bruteforce {
 
     private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
     private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
     private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
     private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String base = System.getProperty("user.dir") + "\\src\\gdsctest";
 
 
     private static class Config {
@@ -33,33 +32,29 @@ public class Bruteforces {
         writer.flush();
     }
 
-    static List<String> subsq;
-
     public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int M = sc.nextInt();
-        int N = sc.nextInt();
-        String S = sc.next();
-        subsq = new ArrayList<>();
-        findsubsequences(S, "");
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+        int[] a = sc.readArray(n);
+        List<Integer> arr = new ArrayList<>();
+        for (int i = 0; i < k; i++)
+            for (int j = 0; j < n; j++)
+                arr.add(a[j]);
+        int size = arr.size();
         int ans = 0;
-        for (String s : subsq) {
-            if (s.equals(""))
-                continue;
-            int num = Integer.parseInt(s);
-            if (num % N == 0)
-                ans++;
+        for (int len = 1; len <= size; len++) {
+            for (int l = 0; l < size; l++) {
+                int r = l + len - 1;
+                if (r >= size)
+                    break;
+                int sum = 0;
+                for (int i = l; i <= r; i++)
+                    sum += arr.get(i);
+                ans = Math.max(ans, sum);
+            }
         }
+        ans %= 100000007;
         writer.write(ans + "\n");
-    }
-
-    private static void findsubsequences(String s,
-                                         String ans) {
-        if (s.length() == 0) {
-            subsq.add(ans);
-            return;
-        }
-        findsubsequences(s.substring(1), ans + s.charAt(0));
-        findsubsequences(s.substring(1), ans);
     }
 
     private static class FastScanner {

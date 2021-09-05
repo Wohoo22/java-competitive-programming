@@ -1,12 +1,11 @@
+import java.math.BigInteger;
+
 public class Nothing {
     public static void main(String[] args) {
-        for (int i=0; i<=200; i++) {
-            if (i % 7 == 0)
-                System.out.print(i + " ");
-            if (i == 100)
-                System.out.println();
-        }
-        System.out.println("");
-        System.out.println(92 % 7);
+        BigInteger first = new BigInteger("1000");
+        System.out.println("First old " + first);
+        BigInteger second = first.add(new BigInteger("50"));
+        System.out.println("Second old " + second);
+        System.out.println("First new " + first);
     }
 }
