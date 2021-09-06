@@ -35,6 +35,16 @@ public class Template {
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
     }
 
+    private static class Pair<A, B> {
+        A first;
+        B second;
+
+        public Pair(A first, B second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
     private static class CustomBigInteger {
         private final BigInteger value;
 
