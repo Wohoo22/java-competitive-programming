@@ -24,63 +24,11 @@ public class Solution {
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = sc.nextInt();
+        int t = 1;
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
-    }
-
-    private static CustomBigInteger sumRange(int l, int r, CustomBigInteger[] postfixSum, int[] d) {
-        if (l > r)
-            return new CustomBigInteger(0);
-        if (l == r)
-            return new CustomBigInteger(d[l]);
-        if (r == postfixSum.length - 1)
-            return postfixSum[l];
-        return postfixSum[l].subtract(postfixSum[r + 1]);
-    }
-
-    private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int n = sc.nextInt();
-        int x = sc.nextInt();
-        int[] d = new int[2 * n + 1];
-        for (int i = 1; i <= n; i++) {
-            d[i] = d[i + n] = sc.nextInt();
-        }
-        CustomBigInteger[] postfixSum = new CustomBigInteger[2 * n + 1];
-        for (int i = 2 * n; i >= 1; i--) {
-            if (i == 2 * n) {
-                postfixSum[i] = new CustomBigInteger(d[i]);
-            } else {
-                postfixSum[i] = new CustomBigInteger(d[i]).add(d[i + 1]);
-            }
-        }
-        CustomBigInteger xBig = new CustomBigInteger(x);
-        int maxMonth = 1;
-        int maxValue = 0;
-        for (int i = n + 1; i <= 2 * n; i++) {
-            int l = 1, r = i;
-            while (l < r) {
-                int m = Math.floorDiv(r - l + 1, 2);
-                CustomBigInteger sum = sumRange(m, i, postfixSum, d);
-                if (sum.greaterThan(xBig) || sum.equal(xBig)) {
-                    l = m;
-                } else {
-                    r = m - 1;
-                }
-            }
-            CustomBigInteger all = sumRange(l, i, postfixSum, d);
-            CustomBigInteger remain;
-            if (l < i) {
-                remain = all.subtract(
-                        sumRange(l - 1, i, postfixSum, d)
-                );
-            } else {
-                remain = all;
-            }
-
-        }
     }
 
     private static class CustomBigInteger {
@@ -122,6 +70,14 @@ public class Solution {
 
         public boolean greaterThan(CustomBigInteger value) {
             return this.value.compareTo(value.value) > 0;
+        }
+
+        public boolean greaterThanOrEqual(CustomBigInteger value) {
+            return this.greaterThan(value) || this.equal(value);
+        }
+
+        public boolean lessThanOrEqual(CustomBigInteger value) {
+            return this.lessThan(value) || this.equal(value);
         }
 
         public static CustomBigInteger max(CustomBigInteger a, CustomBigInteger b) {
@@ -237,6 +193,26 @@ public class Solution {
         public CustomBigInteger mod(long value) {
             return new CustomBigInteger(
                     this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(int value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger div(int value) {
+            return new CustomBigInteger(
+                    this.value.divide(
                             new BigInteger(
                                     String.valueOf(value)
                             )

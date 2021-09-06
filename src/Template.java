@@ -24,7 +24,8 @@ public class Template {
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = sc.nextInt();
+        int t = 1;
+        t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
@@ -196,6 +197,79 @@ public class Template {
         public CustomBigInteger mod(long value) {
             return new CustomBigInteger(
                     this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(String value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(int value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(long value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+
+        public CustomBigInteger div(String value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger div(int value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger div(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger div(long value) {
+            return new CustomBigInteger(
+                    this.value.divide(
                             new BigInteger(
                                     String.valueOf(value)
                             )
