@@ -43,6 +43,9 @@ public class Template {
             this.first = first;
             this.second = second;
         }
+
+        public Pair() {
+        }
     }
 
     private static class CustomBigInteger {

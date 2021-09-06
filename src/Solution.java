@@ -1,6 +1,6 @@
 import java.io.*;
 import java.math.BigInteger;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Solution {
 
@@ -19,16 +19,72 @@ public class Solution {
     }
 
     public static void main(String[] args) throws Exception {
-        run();
+        System.out.println(
+                numberOfWeakCharacters(new int[][]
+                        {{2, 2}, {3, 3}}
+                )
+        );
     }
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
         int t = 1;
+        t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
+    }
+
+    private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+    }
+
+    public static int numberOfWeakCharacters(int[][] properties) {
+        int n = properties.length;
+        List<Pair<Integer, Integer>> props = new ArrayList<>();
+        for (int[] p : properties)
+            props.add(new Pair<>(p[0], p[1]));
+        props.sort((a, b) -> {
+            if (a.first < b.first) return -1;
+            if (a.first > b.first) return 1;
+            return 0;
+        });
+        int[] postfixMaxSecond = new int[props.size()];
+        for (int i = props.size() - 1; i >= 0; i--) {
+            if (i == props.size() - 1) {
+                postfixMaxSecond[i] = props.get(i).second;
+            } else {
+                postfixMaxSecond[i] = Math.max(
+                        props.get(i).second,
+                        postfixMaxSecond[i + 1]
+                );
+            }
+        }
+        Map<Integer, Integer> lstFirst = new HashMap<>();
+        for (int i = 0; i < props.size(); i++) {
+            lstFirst.put(props.get(i).first, i);
+        }
+        int ans = 0;
+        for (Pair<Integer, Integer> p : props) {
+            int lst = lstFirst.get(p.first);
+            if (lst < props.size() - 1
+                    && postfixMaxSecond[lst + 1] > p.second)
+                ans++;
+        }
+        return ans;
+    }
+
+    private static class Pair<A, B> {
+        A first;
+        B second;
+
+        public Pair(A first, B second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public Pair() {
+        }
     }
 
     private static class CustomBigInteger {
@@ -200,6 +256,14 @@ public class Solution {
             );
         }
 
+        public CustomBigInteger mul(String value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
         public CustomBigInteger mul(int value) {
             return new CustomBigInteger(
                     this.value.multiply(
@@ -210,7 +274,52 @@ public class Solution {
             );
         }
 
+        public CustomBigInteger mul(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(long value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+
+        public CustomBigInteger div(String value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
         public CustomBigInteger div(int value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger div(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger div(long value) {
             return new CustomBigInteger(
                     this.value.divide(
                             new BigInteger(
