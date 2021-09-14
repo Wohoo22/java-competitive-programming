@@ -4,11 +4,11 @@ import java.util.StringTokenizer;
 
 public class Template {
 
-    private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
-    private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
+    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
+    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
+    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
 
 
     private static class Config {
@@ -75,6 +75,10 @@ public class Template {
         @Override
         public String toString() {
             return this.value.toString();
+        }
+
+        public int toInt() {
+            return Integer.parseInt(this.toString());
         }
 
         public boolean lessThan(CustomBigInteger value) {

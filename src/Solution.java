@@ -4,11 +4,11 @@ import java.util.*;
 
 public class Solution {
 
-    private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
-    private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
+    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
+    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
+    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
 
 
     private static class Config {
@@ -18,13 +18,101 @@ public class Solution {
         private static final String outputFile = checkerSolutionOutput;
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(
-                numberOfWeakCharacters(new int[][]
-                        {{2, 2}, {3, 3}}
-                )
-        );
+    static String getWord(String s, int l, int r) {
+        StringBuilder ans = new StringBuilder();
+        for (int i = l; i <= r; i++)
+            ans.append(s.charAt(i));
+        return ans.toString();
     }
+
+    static void processAdd(Map<String, Integer> wrong, Map<String, Integer> ok, String word) {
+        if (wrong.containsKey(word)) {
+            int pre = wrong.get(word);
+            if (pre + 1 == ok.get(word)) wrong.remove(word);
+            else wrong.put(word, pre + 1);
+        } else {
+            wrong.put(word, ok.get(word) + 1);
+        }
+    }
+
+    static void processRemove(Map<String, Integer> wrong, Map<String, Integer> ok, String word) {
+        if (wrong.containsKey(word)) {
+            int pre = wrong.get(word);
+            if (pre - 1 == ok.get(word)) wrong.remove(word);
+            else wrong.put(word, pre - 1);
+        } else {
+            wrong.put(word, ok.get(word) - 1);
+        }
+    }
+
+    static List<Integer> find(String s, String[] words, int extra) {
+        int wordLength = 0;
+        for (String w : words)
+            wordLength += w.length();
+        Map<String, Integer> wrong = new HashMap<>();
+        Map<String, Integer> ok = new HashMap<>();
+        for (String w : words) {
+            ok.put(w, 0);
+            wrong.put(w, 0);
+        }
+        for (String w : words) {
+            int pre = ok.get(w);
+            ok.put(w, pre + 1);
+        }
+        List<Integer> ans = new ArrayList<>();
+        for (int l = 0; l <= s.length(); l += words[0].length()) {
+            int r = l + wordLength - 1;
+            if (r >= s.length())
+                break;
+            if (l > 0) {
+                String lst = getWord(s, l - words[0].length(), l - 1);
+                String nxt = getWord(s, r - words[0].length() + 1, r);
+                // process lst
+                if (ok.containsKey(lst)) {
+                    processRemove(wrong, ok, lst);
+                }
+                // process nxt
+                if (ok.containsKey(nxt)) {
+                    processAdd(wrong, ok, nxt);
+                }
+            } else {
+                for (int i = 0; i <= r; i += words[0].length()) {
+                    String word = getWord(s, i, i + words[0].length() - 1);
+                    if (ok.containsKey(word)) {
+                        processAdd(wrong, ok, word);
+                    }
+                }
+            }
+            if (wrong.isEmpty())
+                ans.add(l + extra);
+        }
+        return ans;
+    }
+
+
+    public static List<Integer> findSubstring(String s, String[] words) {
+        int n = words[0].length();
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            StringBuilder str = new StringBuilder();
+            for (int j = i; j < s.length(); j++)
+                str.append(s.charAt(j));
+            ans.addAll(find(str.toString(), words, i));
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<Integer> ans = findSubstring("barfoofoobarthefoobarman", new String[]{
+                "bar","foo","the"
+        });
+        System.out.print("[ ");
+        for (Integer i : ans) {
+            System.out.print(i + ", ");
+        }
+        System.out.print("]");
+    }
+
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
@@ -37,41 +125,6 @@ public class Solution {
     }
 
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-    }
-
-    public static int numberOfWeakCharacters(int[][] properties) {
-        int n = properties.length;
-        List<Pair<Integer, Integer>> props = new ArrayList<>();
-        for (int[] p : properties)
-            props.add(new Pair<>(p[0], p[1]));
-        props.sort((a, b) -> {
-            if (a.first < b.first) return -1;
-            if (a.first > b.first) return 1;
-            return 0;
-        });
-        int[] postfixMaxSecond = new int[props.size()];
-        for (int i = props.size() - 1; i >= 0; i--) {
-            if (i == props.size() - 1) {
-                postfixMaxSecond[i] = props.get(i).second;
-            } else {
-                postfixMaxSecond[i] = Math.max(
-                        props.get(i).second,
-                        postfixMaxSecond[i + 1]
-                );
-            }
-        }
-        Map<Integer, Integer> lstFirst = new HashMap<>();
-        for (int i = 0; i < props.size(); i++) {
-            lstFirst.put(props.get(i).first, i);
-        }
-        int ans = 0;
-        for (Pair<Integer, Integer> p : props) {
-            int lst = lstFirst.get(p.first);
-            if (lst < props.size() - 1
-                    && postfixMaxSecond[lst + 1] > p.second)
-                ans++;
-        }
-        return ans;
     }
 
     private static class Pair<A, B> {
@@ -114,6 +167,10 @@ public class Solution {
         @Override
         public String toString() {
             return this.value.toString();
+        }
+
+        public int toInt() {
+            return Integer.parseInt(this.toString());
         }
 
         public boolean lessThan(CustomBigInteger value) {
