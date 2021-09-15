@@ -1,22 +1,23 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class Bruteforce {
 
-    private static final String checkerSolutionOutput = System.getProperty("user.dir") + "\\src\\_checker.solution.out";
-    private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out";
-    private static final String fileInput = System.getProperty("user.dir") + "\\src\\_in";
-    private static final String fileOutput = System.getProperty("user.dir") + "\\src\\_in";
+    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
+    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
+    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
+    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
 
 
     private static class Config {
-        static final boolean useInputFile = true;
-        static final boolean useOutputFile = true;
-        static final String inputFile = checkerInput;
-        static final String outputFile = checkerBruteforcesOutput;
+        private static final boolean useInputFile = true;
+        private static final boolean useOutputFile = false;
+        private static final String inputFile = fileInput;
+        private static final String outputFile = checkerSolutionOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -25,36 +26,326 @@ public class Bruteforce {
 
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
-        int t = sc.nextInt();
+        int t = 1;
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
-    public static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
+    static int ans;
+
+    static void dfs(int u, int tourism, boolean[] visited, ArrayList<Integer>[] adj, boolean[] industrial) {
+        visited[u] = true;
+        if (industrial[u]) ans += tourism;
+        else tourism++;
+        for (int v : adj[u])
+            if (!visited[v])
+                dfs(v, tourism, visited, adj, industrial);
+    }
+
+    static void generate(int i, int cnt, boolean[] store, int n, int k, List<boolean[]> result) {
+        store[i] = true;
+        if (cnt == k) {
+            boolean[] copy = new boolean[n + 1];
+            for (int j = 1; j <= n; j++) copy[j] = store[j];
+            result.add(copy);
+            return;
+        }
+        for (int j = i + 1; j <= n; j++) {
+            for (int f = i + 1; f <= n; j++) store[i] = false;
+            generate(j, cnt + 1, store, n, k, result);
+        }
+    }
+
+    static List<boolean[]> generate(int n, int k) {
+        List<boolean[]> result = new ArrayList<>();
+        boolean[] store = new boolean[n + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int f = 1; f <= n; f++) store[f] = false;
+            generate(i, 0, store, n, k, result);
+        }
+        return result;
+    }
+
+    private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
         int k = sc.nextInt();
-        int[] a = sc.readArray(n);
-        List<Integer> arr = new ArrayList<>();
-        for (int i = 0; i < k; i++)
-            for (int j = 0; j < n; j++)
-                arr.add(a[j]);
-        int size = arr.size();
-        int ans = 0;
-        for (int len = 1; len <= size; len++) {
-            for (int l = 0; l < size; l++) {
-                int r = l + len - 1;
-                if (r >= size)
-                    break;
-                int sum = 0;
-                for (int i = l; i <= r; i++)
-                    sum += arr.get(i);
-                ans = Math.max(ans, sum);
-            }
+        ArrayList<Integer>[] adj = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) adj[i] = new ArrayList<>();
+        for (int i = 1; i < n; i++) {
+            int u = sc.nextInt(), v = sc.nextInt();
+            adj[u].add(v);
+            adj[v].add(u);
         }
-        ans %= 100000007;
-        writer.write(ans + "\n");
+        List<boolean[]> cases = generate(n, k);
+        int mx = 0;
+        for (boolean[] c : cases) {
+            ans = 0;
+            dfs(1, 0, new boolean[n + 1], adj, c);
+            mx = Math.max(ans, mx);
+        }
+        writer.write(mx + "");
+    }
+
+    private static class Pair<A, B> {
+        A first;
+        B second;
+
+        public Pair(A first, B second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public Pair() {
+        }
+    }
+
+    private static class CustomBigInteger {
+        private final BigInteger value;
+
+        public CustomBigInteger(int value) {
+            this.value = new BigInteger(String.valueOf(value));
+        }
+
+
+        public CustomBigInteger(String value) {
+            this.value = new BigInteger(value);
+        }
+
+        public CustomBigInteger(long value) {
+            this.value = new BigInteger(String.valueOf(value));
+        }
+
+        public CustomBigInteger(CustomBigInteger value) {
+            this.value = new BigInteger(value.toString());
+        }
+
+        public CustomBigInteger(BigInteger value) {
+            this.value = new BigInteger(value.toString());
+        }
+
+        @Override
+        public String toString() {
+            return this.value.toString();
+        }
+
+        public int toInt() {
+            return Integer.parseInt(this.toString());
+        }
+
+        public boolean lessThan(CustomBigInteger value) {
+            return this.value.compareTo(value.value) < 0;
+        }
+
+        public boolean equal(CustomBigInteger value) {
+            return this.value.compareTo(value.value) == 0;
+        }
+
+        public boolean greaterThan(CustomBigInteger value) {
+            return this.value.compareTo(value.value) > 0;
+        }
+
+        public boolean greaterThanOrEqual(CustomBigInteger value) {
+            return this.greaterThan(value) || this.equal(value);
+        }
+
+        public boolean lessThanOrEqual(CustomBigInteger value) {
+            return this.lessThan(value) || this.equal(value);
+        }
+
+        public static CustomBigInteger max(CustomBigInteger a, CustomBigInteger b) {
+            if (a.greaterThan(b))
+                return a;
+            return b;
+        }
+
+        public static CustomBigInteger min(CustomBigInteger a, CustomBigInteger b) {
+            if (a.lessThan(b))
+                return a;
+            return b;
+        }
+
+        public CustomBigInteger add(String value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger add(int value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger add(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger add(long value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(String value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(int value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(long value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(String value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(int value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(long value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(String value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(int value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(long value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+
+        public CustomBigInteger div(String value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger div(int value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger div(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger div(long value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
     }
 
     private static class FastScanner {
