@@ -1,7 +1,8 @@
 import java.io.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution {
@@ -14,7 +15,7 @@ public class Solution {
 
 
     private static class Config {
-        private static final boolean useInputFile = true;
+        private static final boolean useInputFile = false;
         private static final boolean useOutputFile = false;
         private static final String inputFile = fileInput;
         private static final String outputFile = checkerSolutionOutput;
@@ -27,83 +28,63 @@ public class Solution {
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
         int t = 1;
+        t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
-    static ArrayList<Integer>[] adj;
-    static int[] child;
-    static int[] nodeDepth;
-    static boolean[] visited;
-    static boolean[] industrial;
-
-    private static void dfsCountDepth(int u, int depth) {
-        visited[u] = true;
-        depth++;
-        nodeDepth[u] = depth;
-        for (int v : adj[u])
-            if (!visited[v])
-                dfsCountDepth(v, depth);
-    }
-
-    private static int dfsCountChild(int u) {
-        visited[u] = true;
-        int cnt = 1;
-        for (int v : adj[u])
-            if (!visited[v])
-                cnt += dfsCountChild(v);
-        child[u] = cnt;
-        return cnt;
-    }
-
-    static int ans;
-
-    private static void dfsCount(int u, int tourism) {
-        visited[u] = true;
-        if (industrial[u]) ans += tourism;
-        else tourism++;
-        for (int v : adj[u])
-            if (!visited[v])
-                dfsCount(v, tourism);
-    }
-
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        int k = sc.nextInt();
-        adj = new ArrayList[n + 1];
-        for (int i = 1; i <= n; i++) adj[i] = new ArrayList<>();
-        for (int i = 1; i < n; i++) {
-            int u = sc.nextInt(), v = sc.nextInt();
-            adj[u].add(v);
-            adj[v].add(u);
+        ArrayList<Integer>[] require = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
+            int k = sc.nextInt();
+            require[i] = new ArrayList<>();
+            for (int j = 0; j < k; j++) {
+                require[i].add(sc.nextInt());
+            }
         }
-        child = new int[n + 1];
-        visited = new boolean[n + 1];
-        dfsCountChild(1);
-        nodeDepth = new int[n + 1];
-        visited = new boolean[n + 1];
-        dfsCountDepth(1, 0);
-        List<Integer> nodes = new ArrayList<>();
-        for (int i = 1; i <= n; i++) nodes.add(i);
-        nodes.sort((a, b) -> {
-            if (child[a] < child[b]) return -1;
-            if (child[a] > child[b]) return 1;
-            if (nodeDepth[a] > nodeDepth[b]) return -1;
-            if (nodeDepth[a] < nodeDepth[b]) return 1;
-            return 0;
-        });
-        industrial = new boolean[n + 1];
-        int i = 0;
-        while (k > 0) {
-            industrial[nodes.get(i++)] = true;
-            k--;
+        ArrayList<Integer>[] help = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
+            help[i] = new ArrayList<>();
         }
-        ans = 0;
-        visited = new boolean[n + 1];
-        dfsCount(1, 0);
-        writer.write(ans + "");
+        for (int i = 1; i <= n; i++) {
+            for (int j : require[i]) {
+                help[j].add(i);
+            }
+        }
+        Queue<Integer> ready = new LinkedList<>();
+        int[] remaining = new int[n + 1];
+        for (int i = 1; i <= n; i++)
+            remaining[i] = require[i].size();
+        int[] days = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            if (require[i].size() == 0) {
+                ready.add(i);
+                days[i] = 1;
+            }
+        }
+        while (!ready.isEmpty()) {
+            int i = ready.poll();
+            for (int j : help[i]) {
+                remaining[j]--;
+                if (remaining[j] <= 0)
+                    ready.add(j);
+                int day = j > i ? days[i] : days[i] + 1;
+                days[j] = Math.max(days[j], day);
+            }
+            int z = 0;
+        }
+        for (int i = 1; i <= n; i++)
+            if (remaining[i] > 0) {
+                writer.write(-1 + "\n");
+                return;
+            }
+        int ans = 0;
+        for (int i = 1; i <= n; i++)
+            ans = Math.max(ans, days[i]);
+        writer.write(ans + "\n");
     }
 
     private static class Pair<A, B> {

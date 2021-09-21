@@ -8,13 +8,13 @@ public class Template {
     private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
     private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
-    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_out";
 
 
     private static class Config {
         private static final boolean useInputFile = true;
-        private static final boolean useOutputFile = true;
-        private static final String inputFile = checkerInput;
+        private static final boolean useOutputFile = false;
+        private static final String inputFile = fileInput;
         private static final String outputFile = checkerSolutionOutput;
     }
 

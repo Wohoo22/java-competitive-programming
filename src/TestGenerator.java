@@ -2,11 +2,15 @@ import java.io.*;
 import java.util.Random;
 
 public class TestGenerator {
-    private static final String checkerInput = System.getProperty("user.dir") + "\\src\\_checker.in";
+    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
+    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
+    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
+    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
 
     private static class Config {
         static boolean useOutputFile = true;
-        static String outputFile = checkerInput;
+        static String outputFile = fileInput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -17,16 +21,27 @@ public class TestGenerator {
         BufferedWriter writer;
         writer = getWriter();
 
-        int t = rndInt(1, 100);
+        int t = rndInt(20000, 20000);
         writer.write(t + "\n");
         for (int v = 0; v < t; v++) {
-            int n = rndInt(1, 20);
-            int k = rndInt(1, 20);
-            writer.write(n + " " + k + "\n");
+            // n
+            int n = rndInt(3, 7);
+            writer.write(n + "\n");
+            // for n
             for (int i = 0; i < n; i++) {
-                writer.write(rndInt(-1000, 1000) + " ");
+                // k
+                int k = rndInt(0, n - 1);
+                writer.write(k + " ");
+                // for k
+                for (int j = 0; j < k; j++) {
+                    // f
+                    int f = rndInt(1, n);
+                    while (f == i + 1)
+                        f = rndInt(1, n);
+                    writer.write(f + " ");
+                }
+                writer.write("\n");
             }
-            writer.write("\n");
         }
 
         writer.flush();
