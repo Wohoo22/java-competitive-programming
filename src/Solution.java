@@ -1,8 +1,8 @@
 import java.io.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.StringTokenizer;
 
 public class Solution {
@@ -11,11 +11,11 @@ public class Solution {
     private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
     private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
-    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_out";
 
 
     private static class Config {
-        private static final boolean useInputFile = false;
+        private static final boolean useInputFile = true;
         private static final boolean useOutputFile = false;
         private static final String inputFile = fileInput;
         private static final String outputFile = checkerSolutionOutput;
@@ -35,57 +35,57 @@ public class Solution {
         writer.flush();
     }
 
+    private static int upper(int[][] peopleArray, int bound, int axis) {
+        int bin = Arrays.binarySearch(peopleArray, bound, (value, key) -> {
+            int val = (int[]) value[1];
+        });
+        return 0;
+    }
+
+    private static int lower(int[][] peopleArray, int bound, int axis) {
+        return 0;
+
+    }
+
+    private static int calcCouples(int[][] peopleArray, int axis, int start, int end) {
+        return 0;
+
+    }
+
+    private static int calcAxis(ArrayList<int[]> people, int axis, int[] lines) {
+        int[][] peopleArray = new int[people.size()][2];
+        for (int i = 0; i < peopleArray.length; i++)
+            peopleArray[i] = people.get(i);
+        int ans = 0;
+        for (int i = 0; i < lines.length; i++) {
+            int curVertical = lines[i];
+            int lstVertical = lines[i - 1];
+            int start = upper(peopleArray, lstVertical, 1);
+            int end = lower(peopleArray, curVertical, 1);
+            ans += calcCouples(peopleArray, 1, start, end);
+        }
+        return ans;
+    }
+
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        ArrayList<Integer>[] require = new ArrayList[n + 1];
-        for (int i = 1; i <= n; i++) {
-            int k = sc.nextInt();
-            require[i] = new ArrayList<>();
-            for (int j = 0; j < k; j++) {
-                require[i].add(sc.nextInt());
-            }
+        int m = sc.nextInt();
+        int k = sc.nextInt();
+        int[] verticals = new int[n];
+        int[] horizontals = new int[m];
+        int[][] people = new int[k][2];
+        ArrayList<int[]> peopleVertical = new ArrayList<>();
+        ArrayList<int[]> peopleHorizontal = new ArrayList<>();
+        for (int[] pp : people) {
+            peopleVertical.add(pp);
+            peopleHorizontal.add(pp);
         }
-        ArrayList<Integer>[] help = new ArrayList[n + 1];
-        for (int i = 1; i <= n; i++) {
-            help[i] = new ArrayList<>();
-        }
-        for (int i = 1; i <= n; i++) {
-            for (int j : require[i]) {
-                help[j].add(i);
-            }
-        }
-        Queue<Integer> ready = new LinkedList<>();
-        int[] remaining = new int[n + 1];
-        for (int i = 1; i <= n; i++)
-            remaining[i] = require[i].size();
-        int[] days = new int[n + 1];
-        for (int i = 1; i <= n; i++) {
-            if (require[i].size() == 0) {
-                ready.add(i);
-                days[i] = 1;
-            }
-        }
-        while (!ready.isEmpty()) {
-            int i = ready.poll();
-            for (int j : help[i]) {
-                remaining[j]--;
-                if (remaining[j] <= 0)
-                    ready.add(j);
-                int day = j > i ? days[i] : days[i] + 1;
-                days[j] = Math.max(days[j], day);
-            }
-            int z = 0;
-        }
-        for (int i = 1; i <= n; i++)
-            if (remaining[i] > 0) {
-                writer.write(-1 + "\n");
-                return;
-            }
-        int ans = 0;
-        for (int i = 1; i <= n; i++)
-            ans = Math.max(ans, days[i]);
+        peopleVertical.sort(Comparator.comparingInt(a -> a[1]));
+        peopleHorizontal.sort(Comparator.comparingInt(a -> a[0]));
+        int ans = calcAxis(peopleVertical, 1, verticals) + calcAxis(peopleHorizontal, 0, horizontals);
         writer.write(ans + "\n");
     }
+
 
     private static class Pair<A, B> {
         A first;
