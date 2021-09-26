@@ -1,7 +1,5 @@
 import java.io.*;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class Bruteforce {
@@ -10,7 +8,7 @@ public class Bruteforce {
     private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
     private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
     private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
-    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_out";
 
 
     private static class Config {
@@ -33,59 +31,12 @@ public class Bruteforce {
         writer.flush();
     }
 
-    static int ans;
-
-    static void dfs(int u, int tourism, boolean[] visited, ArrayList<Integer>[] adj, boolean[] industrial) {
-        visited[u] = true;
-        if (industrial[u]) ans += tourism;
-        else tourism++;
-        for (int v : adj[u])
-            if (!visited[v])
-                dfs(v, tourism, visited, adj, industrial);
-    }
-
-    static void generate(int i, int cnt, boolean[] store, int n, int k, List<boolean[]> result) {
-        store[i] = true;
-        if (cnt == k) {
-            boolean[] copy = new boolean[n + 1];
-            for (int j = 1; j <= n; j++) copy[j] = store[j];
-            result.add(copy);
-            return;
-        }
-        for (int j = i + 1; j <= n; j++) {
-            for (int f = i + 1; f <= n; j++) store[i] = false;
-            generate(j, cnt + 1, store, n, k, result);
-        }
-    }
-
-    static List<boolean[]> generate(int n, int k) {
-        List<boolean[]> result = new ArrayList<>();
-        boolean[] store = new boolean[n + 1];
-        for (int i = 1; i <= n; i++) {
-            for (int f = 1; f <= n; f++) store[f] = false;
-            generate(i, 0, store, n, k, result);
-        }
-        return result;
-    }
-
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        int k = sc.nextInt();
-        ArrayList<Integer>[] adj = new ArrayList[n + 1];
-        for (int i = 1; i <= n; i++) adj[i] = new ArrayList<>();
-        for (int i = 1; i < n; i++) {
-            int u = sc.nextInt(), v = sc.nextInt();
-            adj[u].add(v);
-            adj[v].add(u);
+        int[][] graph = new int[n + 1][n + 1];
+        for (int i = 1; i <= n; i++) {
+
         }
-        List<boolean[]> cases = generate(n, k);
-        int mx = 0;
-        for (boolean[] c : cases) {
-            ans = 0;
-            dfs(1, 0, new boolean[n + 1], adj, c);
-            mx = Math.max(ans, mx);
-        }
-        writer.write(mx + "");
     }
 
     private static class Pair<A, B> {

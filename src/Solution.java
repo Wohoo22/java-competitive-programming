@@ -1,9 +1,6 @@
 import java.io.*;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Solution {
 
@@ -15,7 +12,7 @@ public class Solution {
 
 
     private static class Config {
-        private static final boolean useInputFile = true;
+        private static final boolean useInputFile = false;
         private static final boolean useOutputFile = false;
         private static final String inputFile = fileInput;
         private static final String outputFile = checkerSolutionOutput;
@@ -28,64 +25,104 @@ public class Solution {
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
         int t = 1;
-        t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
-    private static int upper(int[][] peopleArray, int bound, int axis) {
-        int bin = Arrays.binarySearch(peopleArray, bound, (value, key) -> {
-            int val = (int[]) value[1];
-        });
-        return 0;
-    }
+    static int n;
+    static boolean initGraph[][];
+    static boolean indexedGraph[][];
 
-    private static int lower(int[][] peopleArray, int bound, int axis) {
-        return 0;
-
-    }
-
-    private static int calcCouples(int[][] peopleArray, int axis, int start, int end) {
-        return 0;
-
-    }
-
-    private static int calcAxis(ArrayList<int[]> people, int axis, int[] lines) {
-        int[][] peopleArray = new int[people.size()][2];
-        for (int i = 0; i < peopleArray.length; i++)
-            peopleArray[i] = people.get(i);
-        int ans = 0;
-        for (int i = 0; i < lines.length; i++) {
-            int curVertical = lines[i];
-            int lstVertical = lines[i - 1];
-            int start = upper(peopleArray, lstVertical, 1);
-            int end = lower(peopleArray, curVertical, 1);
-            ans += calcCouples(peopleArray, 1, start, end);
+    private static List<Integer> bfsInitGraph() {
+        boolean[] visted = new boolean[n + 1];
+        List<Integer> res = new ArrayList<>();
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(1);
+        while (!queue.isEmpty()) {
+            int top = queue.poll();
+            res.add(top);
+            visted[top] = true;
+            for (int v = 1; v <= n; v++)
+                if (initGraph[top][v] && !visted[v])
+                    queue.add(v);
         }
-        return ans;
+        return res;
+    }
+
+    private static void dfs(ArrayList<Integer>[] tree, int u, boolean[] visited) {
+        visited[u] = true;
+        tree[u] = new ArrayList<>();
+        for (int v = 1; v <= n; v++) {
+            if (!visited[v] && indexedGraph[u][v]) {
+                tree[u].add(v);
+                dfs(tree, v, visited);
+            }
+        }
+    }
+
+    private static ArrayList<Integer>[] buidDfsTree() {
+        ArrayList<Integer>[] tree = new ArrayList[n + 1];
+        dfs(tree, 1, new boolean[n + 1]);
+        return tree;
+    }
+
+    private static void calcDistFromRoot(ArrayList<Integer>[] dfsTree, int u, int dist, int[] distFromRoot) {
+        distFromRoot[u] = dist;
+        for (int v : dfsTree[u])
+            calcDistFromRoot(dfsTree, v, dist + 1, distFromRoot);
+    }
+
+    private static int calcChildCount(ArrayList<Integer>[] dfsTree, int u, int[] childCnt) {
+        int child = 0;
+        for (int v : dfsTree[u])
+            child += calcChildCount(dfsTree, v, childCnt) + 1;
+        childCnt[u] = child;
+        return child;
     }
 
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        int n = sc.nextInt();
-        int m = sc.nextInt();
-        int k = sc.nextInt();
-        int[] verticals = new int[n];
-        int[] horizontals = new int[m];
-        int[][] people = new int[k][2];
-        ArrayList<int[]> peopleVertical = new ArrayList<>();
-        ArrayList<int[]> peopleHorizontal = new ArrayList<>();
-        for (int[] pp : people) {
-            peopleVertical.add(pp);
-            peopleHorizontal.add(pp);
+        n = sc.nextInt();
+        initGraph = new boolean[n + 1][n + 1];
+        for (int i = 1; i < n; i++) {
+            int u = sc.nextInt(), v = sc.nextInt();
+            initGraph[u][v] = initGraph[v][u] = true;
         }
-        peopleVertical.sort(Comparator.comparingInt(a -> a[1]));
-        peopleHorizontal.sort(Comparator.comparingInt(a -> a[0]));
-        int ans = calcAxis(peopleVertical, 1, verticals) + calcAxis(peopleHorizontal, 0, horizontals);
-        writer.write(ans + "\n");
+        // build index
+        List<Integer> nodes = bfsInitGraph();
+        int[] mapInitGraphToIndexedGraph = new int[n + 1];
+        int index = 1;
+        for (int node : nodes) {
+            mapInitGraphToIndexedGraph[node] = index;
+            index++;
+        }
+        indexedGraph = new boolean[n + 1][n + 1];
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++)
+                if (initGraph[i][j])
+                    indexedGraph[mapInitGraphToIndexedGraph[i]][mapInitGraphToIndexedGraph[j]] = true;
+        // build dfs tree
+        ArrayList<Integer>[] dfsTree = buidDfsTree();
+        // calc dist from node 1
+        int[] distFromRoot = new int[n + 1];
+        calcDistFromRoot(dfsTree, 1, 0, distFromRoot);
+        // prefix dist
+        long[] postfixSumDistFromRoot = new long[n + 1];
+        for (int i = n; i >= 1; i--) {
+            if (i == n) postfixSumDistFromRoot[i] = distFromRoot[i];
+            else postfixSumDistFromRoot[i] = distFromRoot[i] + postfixSumDistFromRoot[i + 1];
+        }
+        // calc child
+        int[] childCnt = new int[n + 1];
+        calcChildCount(dfsTree, 1, childCnt);
+        // calc ans
+        long ans = 0;
+        for (int i = 1; i < n; i++) {
+            ans += postfixSumDistFromRoot[i + 1] + (n - i) * distFromRoot[i] - childCnt[i] * 2 * distFromRoot[i];
+        }
+        writer.write(ans + "");
     }
-
 
     private static class Pair<A, B> {
         A first;
