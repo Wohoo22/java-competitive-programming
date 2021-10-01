@@ -1,62 +1,82 @@
-import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Leetcode {
+class Leetcode {
+    static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode() {
+        }
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
 
     public static void main(String[] args) {
-        System.out.println(
-                largestRectangleArea(
-                        new int[]{
-                                2,1,5,6,2,3
-                        }
-                )
+        TreeNode root = new TreeNode(
+                1,
+                new TreeNode(
+                        2,
+                        new TreeNode(
+                                3,
+                                new TreeNode(
+                                        4,
+                                        new TreeNode(5),
+                                        null
+                                ),
+                                null
+                        ),
+                        null
+                ),
+                null
         );
+        System.out.println(maxPathSum(root));
     }
 
-    static class Area {
-        int index;
-        int value;
+    static Map<TreeNode, Integer> maxPathOfNode = new HashMap<>();
 
-        public Area(int index, int value) {
-            this.index = index;
-            this.value = value;
-        }
+    static void findMaxPathOfNode(TreeNode curNode) {
+        if (curNode == null) return;
+        findMaxPathOfNode(curNode.left);
+        findMaxPathOfNode(curNode.right);
+        int left = curNode.left == null ? 0 : maxPathOfNode.get(curNode.left);
+        int right = curNode.right == null ? 0 : maxPathOfNode.get(curNode.right);
+        if (left < 0) left = 0;
+        if (right < 0) right = 0;
+        maxPathOfNode.put(curNode, Math.max(
+                curNode.val + left,
+                curNode.val + right
+        ));
     }
 
-    public static int largestRectangleArea(int[] heights) {
-        int n = heights.length;
-        // save right and left pivot
-        int[] right = new int[n];
-        int[] left = new int[n];
-        // calculate left right
-        Stack<Area> st = new Stack<>();
-        for (int i = n - 1; i >= 0; i--) {
-            while (!st.isEmpty()
-                    && st.peek().value >= heights[i])
-                st.pop();
-            if (!st.empty())
-                right[i] = st.peek().index;
-            else
-                right[i] = n;
-            st.push(new Area(i, heights[i]));
-        }
-        st.clear();
-        for (int i = 0; i < n; i++) {
-            while (!st.isEmpty()
-                    && st.peek().value >= heights[i])
-                st.pop();
-            if (!st.empty())
-                left[i] = st.peek().index;
-            else
-                left[i] = -1;
-            st.push(new Area(i, heights[i]));
-        }
-        // calculate ans
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            int l = left[i] + 1;
-            int r = right[i] - 1;
-            ans = Math.max(ans, (r - l + 1) * heights[i]);
-        }
-        return ans;
+    static int maxPath;
+
+    static void findMaxPath(TreeNode curNode) {
+        if (curNode == null) return;
+        findMaxPath(curNode.left);
+        findMaxPath(curNode.right);
+        int left = curNode.left == null ? Integer.MIN_VALUE : maxPathOfNode.get(curNode.left);
+        int right = curNode.right == null ? Integer.MIN_VALUE : maxPathOfNode.get(curNode.right);
+        int curPath = curNode.val;
+        if (left > 0) curPath += left;
+        if (right > 0) curPath += right;
+        maxPath = Math.max(maxPath, curPath);
+
+    }
+
+    public static int maxPathSum(TreeNode root) {
+        findMaxPathOfNode(root);
+        maxPath = Integer.MIN_VALUE;
+        findMaxPath(root);
+        return maxPath;
     }
 }

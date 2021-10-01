@@ -1,22 +1,20 @@
 package pr1;
 
+import java.util.Scanner;
+
 public class Bai4 {
     public static void main(String[] args) {
-        float num = -1000000.1F;
-        if (num == 0) {
-            System.out.println("The number is zero");
+        System.out.println("Enter 9 digits:");
+        Scanner sc = new Scanner(System.in);
+        String s = sc.next();
+        if (s.length() != 9) {
+            System.out.println("Invalid input.");
             return;
         }
-        String result = "A ";
-
-        float abs = Math.abs(num);
-        if (abs < 1) result += "small ";
-        if (abs > 1000000) result += "large ";
-
-        if (num < 0) result += "negative ";
-        else result += "positive ";
-
-        result += "number";
-        System.out.println(result);
+        int lst = 0;
+        for (int i = 0; i < 9; i++) lst += (s.charAt(i) - '0') * (i + 1);
+        lst %= 11;
+        String lstStr = lst == 10 ? "X" : lst + "";
+        System.out.println(s + lstStr);
     }
 }

@@ -1,6 +1,7 @@
 import java.io.*;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 public class Solution {
 
@@ -12,7 +13,7 @@ public class Solution {
 
 
     private static class Config {
-        private static final boolean useInputFile = false;
+        private static final boolean useInputFile = true;
         private static final boolean useOutputFile = false;
         private static final String inputFile = fileInput;
         private static final String outputFile = checkerSolutionOutput;
@@ -25,103 +26,17 @@ public class Solution {
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
         int t = 1;
+        t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
-    static int n;
-    static boolean initGraph[][];
-    static boolean indexedGraph[][];
-
-    private static List<Integer> bfsInitGraph() {
-        boolean[] visted = new boolean[n + 1];
-        List<Integer> res = new ArrayList<>();
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(1);
-        while (!queue.isEmpty()) {
-            int top = queue.poll();
-            res.add(top);
-            visted[top] = true;
-            for (int v = 1; v <= n; v++)
-                if (initGraph[top][v] && !visted[v])
-                    queue.add(v);
-        }
-        return res;
-    }
-
-    private static void dfs(ArrayList<Integer>[] tree, int u, boolean[] visited) {
-        visited[u] = true;
-        tree[u] = new ArrayList<>();
-        for (int v = 1; v <= n; v++) {
-            if (!visited[v] && indexedGraph[u][v]) {
-                tree[u].add(v);
-                dfs(tree, v, visited);
-            }
-        }
-    }
-
-    private static ArrayList<Integer>[] buidDfsTree() {
-        ArrayList<Integer>[] tree = new ArrayList[n + 1];
-        dfs(tree, 1, new boolean[n + 1]);
-        return tree;
-    }
-
-    private static void calcDistFromRoot(ArrayList<Integer>[] dfsTree, int u, int dist, int[] distFromRoot) {
-        distFromRoot[u] = dist;
-        for (int v : dfsTree[u])
-            calcDistFromRoot(dfsTree, v, dist + 1, distFromRoot);
-    }
-
-    private static int calcChildCount(ArrayList<Integer>[] dfsTree, int u, int[] childCnt) {
-        int child = 0;
-        for (int v : dfsTree[u])
-            child += calcChildCount(dfsTree, v, childCnt) + 1;
-        childCnt[u] = child;
-        return child;
-    }
 
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
-        n = sc.nextInt();
-        initGraph = new boolean[n + 1][n + 1];
-        for (int i = 1; i < n; i++) {
-            int u = sc.nextInt(), v = sc.nextInt();
-            initGraph[u][v] = initGraph[v][u] = true;
-        }
-        // build index
-        List<Integer> nodes = bfsInitGraph();
-        int[] mapInitGraphToIndexedGraph = new int[n + 1];
-        int index = 1;
-        for (int node : nodes) {
-            mapInitGraphToIndexedGraph[node] = index;
-            index++;
-        }
-        indexedGraph = new boolean[n + 1][n + 1];
-        for (int i = 1; i <= n; i++)
-            for (int j = 1; j <= n; j++)
-                if (initGraph[i][j])
-                    indexedGraph[mapInitGraphToIndexedGraph[i]][mapInitGraphToIndexedGraph[j]] = true;
-        // build dfs tree
-        ArrayList<Integer>[] dfsTree = buidDfsTree();
-        // calc dist from node 1
-        int[] distFromRoot = new int[n + 1];
-        calcDistFromRoot(dfsTree, 1, 0, distFromRoot);
-        // prefix dist
-        long[] postfixSumDistFromRoot = new long[n + 1];
-        for (int i = n; i >= 1; i--) {
-            if (i == n) postfixSumDistFromRoot[i] = distFromRoot[i];
-            else postfixSumDistFromRoot[i] = distFromRoot[i] + postfixSumDistFromRoot[i + 1];
-        }
-        // calc child
-        int[] childCnt = new int[n + 1];
-        calcChildCount(dfsTree, 1, childCnt);
-        // calc ans
-        long ans = 0;
-        for (int i = 1; i < n; i++) {
-            ans += postfixSumDistFromRoot[i + 1] + (n - i) * distFromRoot[i] - childCnt[i] * 2 * distFromRoot[i];
-        }
-        writer.write(ans + "");
+        int n = sc.nextInt();
+        int a[] = sc.readArray(n);
     }
 
     private static class Pair<A, B> {

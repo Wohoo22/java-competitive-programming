@@ -13,7 +13,7 @@ public class Checker {
     private static void runTest() throws Exception {
         TestGenerator.run();
         Solution.run();
-//        Bruteforce.run();
+        Bruteforce.run();
         File bruteforcesOutputFile = new File(System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out");
         File solutionOutputFile = new File(System.getProperty("user.dir") + "\\src\\_checker.solution.out");
         Scanner bruteforcesScanner = new Scanner(bruteforcesOutputFile);
