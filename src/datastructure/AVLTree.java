@@ -92,12 +92,13 @@ public class AVLTree {
 
     static void preOrder(Node node) {
         if (node != null) {
-            System.out.print("Node: " + node.key + " ");
-            if (node.left != null)
-                System.out.println("Left: " + node.left.key);
-            if (node.right != null)
-                System.out.println("Right: " + node.right.key);
-            System.out.println("________________________");
+            System.out.print(node.key + " ");
+//            System.out.print("Node: " + node.key + " ");
+//            if (node.left != null)
+//                System.out.println("Left: " + node.left.key);
+//            if (node.right != null)
+//                System.out.println("Right: " + node.right.key);
+//            System.out.println("________________________");
             preOrder(node.left);
             preOrder(node.right);
         }
@@ -110,14 +111,15 @@ public class AVLTree {
         tree.root = tree.insert(tree.root, 30);
         tree.root = tree.insert(tree.root, 40);
         tree.root = tree.insert(tree.root, 50);
-        tree.root = tree.insert(tree.root, 60);
-        tree.root = tree.insert(tree.root, 70);
-        tree.root = tree.insert(tree.root, 80);
-        tree.root = tree.insert(tree.root, 90);
-        tree.root = tree.insert(tree.root, 100);
+        tree.root = tree.insert(tree.root, 25);
 
         System.out.println("Preorder traversal" +
                 " of constructed tree is : ");
         preOrder(tree.root);
+
+        /*
+        Preorder traversal of the constructed AVL tree is
+        30 20 10 25 40 50
+         */
     }
 }
