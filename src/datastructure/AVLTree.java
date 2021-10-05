@@ -1,7 +1,10 @@
 package datastructure;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AVLTree {
-    /* INTUITION
+    /* <<<<< INSERTION >>>>>
 
     ### LEFT LEFT CASE
 
@@ -55,14 +58,12 @@ public class AVLTree {
 
     public void insert(int key) {
         tree.root = tree.insert(tree.root, key);
-    }
-
-    public void remove(int key) {
-
+        int lastOcc = tree.keyOccurence.getOrDefault(key, 0);
+        tree.keyOccurence.put(key, lastOcc + 1);
     }
 
     public int countNodesLessThan(int key) {
-        return tree.countNodesLessThan(key);
+        return tree.countKeysLessThan(key);
     }
 
     public void preOrder() {
@@ -84,7 +85,7 @@ public class AVLTree {
 
     private void printNodesUtil(Node node) {
         if (node != null) {
-            System.out.println("<___NODE___>");
+            System.out.println("<<<<NODE>>>>");
             System.out.println("KEY: " + node.key + " ");
             System.out.println("_childcount: " + node.childCount);
             if (node.left != null) System.out.println("_left: " + node.left.key);
@@ -96,18 +97,32 @@ public class AVLTree {
     }
 
     private static class Node {
-        int key, height, childCount;
+        int key, height, childCount, childOccurence;
         Node left, right;
 
         Node(int key) {
             this.key = key;
             this.height = 1;
             this.childCount = 0;
+            this.childOccurence = 0;
         }
     }
 
     private static class Tree {
         private Node root;
+        private Map<Integer, Integer> keyOccurence = new HashMap<>();
+
+        // > cacculate-child-occurence
+
+        private int countChildOccurence(Node n) {
+            if (n == null) return 0;
+            int result = 0;
+            if (n.left != null) result += n.left.childOccurence + keyOccurence.get(n.left.key);
+            if (n.right != null) result += n.right.childOccurence + keyOccurence.get(n.right.key);
+            return result;
+        }
+
+        // < caculate-child-occcurence
 
         // > caculate-child-count
 
@@ -152,6 +167,8 @@ public class AVLTree {
             z.height = caculateHeight(z);
             y.childCount = countChild(y);
             z.childCount = countChild(z);
+            y.childOccurence = countChildOccurence(y);
+            z.childOccurence = countChildOccurence(z);
             return y;
         }
 
@@ -173,6 +190,8 @@ public class AVLTree {
             x.height = caculateHeight(x);
             y.childCount = countChild(y);
             x.childCount = countChild(x);
+            y.childOccurence = countChildOccurence(y);
+            x.childOccurence = countChildOccurence(x);
             return x;
         }
 
@@ -189,6 +208,7 @@ public class AVLTree {
             if (key == n.key) return n;
             n.height = caculateHeight(n);
             n.childCount = countChild(n);
+            n.childOccurence = countChildOccurence(n);
             int balance = getBalance(n);
             if (balance > 1) {
                 if (key < n.left.key) return rightRotate(n);
@@ -209,28 +229,57 @@ public class AVLTree {
 
         // > count-node-less-than
 
-        private int countNodesLessThanAnswer;
+        private int countKeysLessThanAnswer;
 
-        private int countNodesLessThan(int key) {
-            countNodesLessThanAnswer = 0;
-            countNodesLessThanUtil(root, key);
-            return countNodesLessThanAnswer;
+        private int countKeysLessThan(int key) {
+            countKeysLessThanAnswer = 0;
+            countKeysLessThanUtil(root, key);
+            return countKeysLessThanAnswer;
         }
 
-        private void countNodesLessThanUtil(Node n, int key) {
+        private void countKeysLessThanUtil(Node n, int key) {
             if (n == null) return;
             if (key > n.key) {
-                countNodesLessThanAnswer += 1;
-                if (n.left != null) countNodesLessThanAnswer += n.left.childCount + 1;
-                countNodesLessThanUtil(n.right, key);
+                countKeysLessThanAnswer += 1;
+                if (n.left != null) countKeysLessThanAnswer += n.left.childCount + 1;
+                countKeysLessThanUtil(n.right, key);
             } else if (key < n.key) {
-                countNodesLessThanUtil(n.left, key);
+                countKeysLessThanUtil(n.left, key);
             } else {
-                if (n.left != null) countNodesLessThanAnswer += n.left.childCount + 1;
+                if (n.left != null) countKeysLessThanAnswer += n.left.childCount + 1;
                 return;
             }
         }
 
         // < count-node-less-than
+
+        // > count-occurence-of-keys-less-than
+
+        private int countOccurenceOfKeysLessThanResult;
+
+        private int countOccurenceOfKeysLessThan(int key) {
+            countOccurenceOfKeysLessThanResult = 0;
+            countOccurenceOfKeysLessThanUtil(root, key);
+            return countOccurenceOfKeysLessThanResult;
+        }
+
+        private void countOccurenceOfKeysLessThanUtil(Node n, int key) {
+            if (n == null) return;
+            if (key > n.key) {
+                countOccurenceOfKeysLessThanResult += keyOccurence.get(n.key);
+                if (n.left != null)
+                    countOccurenceOfKeysLessThanResult += n.left.childOccurence + keyOccurence.get(n.left.key);
+                countOccurenceOfKeysLessThanUtil(n.right, key);
+            } else if (key < n.key) {
+                countOccurenceOfKeysLessThanUtil(n.left, key);
+            } else {
+                if (n.left != null)
+                    countOccurenceOfKeysLessThanResult += n.left.childOccurence + keyOccurence.get(n.left.key);
+                return;
+            }
+        }
+
+        // < count-occurence-of-keys-less-than
+
     }
 }
