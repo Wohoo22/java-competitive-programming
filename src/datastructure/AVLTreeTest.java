@@ -3,13 +3,19 @@ package datastructure;
 import java.util.Random;
 
 public class AVLTreeTest {
+    /*
+        WRONG ANSWER at index 4
+        + Expect: 3
+        + Real: 2
+        Input:
+        { 18, 34, 52, 65, 72, 73, 0, }
+        m = 65
+    */
     public static void main(String[] args) {
 //        simpleTest();
-        printTree(new int[]{20, 4, 11, 17, 18, 19});
-        // {20, 4, 11, 17, 18, 19, 8, 0,}
-        // m = 482
-        // i = 5
-//        countNodeLessThanTest();
+//        printTree(new int[]{18, 34, 52, 65, 72});
+//        countNodeLessThanTest(new int[]{8, 34, 52, 65, 72}, 65);
+        countNodeLessThanTest(null, null);
     }
 
     private static void printTree(int[] insertion) {
@@ -20,13 +26,17 @@ public class AVLTreeTest {
     }
 
 
-    private static void countNodeLessThanTest() {
+    private static void countNodeLessThanTest(int[] inputArray, Integer inputm) {
         int tests = rndInt(100, 100);
         for (int test = 0; test < tests; test++) {
-            int n = rndInt(1, 10);
-            int a[] = new int[n + 1];
-            for (int i = 0; i < n; i++) a[i] = rndInt(1, 20);
-            int m = rndInt(1, 1000);
+            int n = inputArray == null ? rndInt(1, 1000) : inputArray.length;
+            int a[] = inputArray == null ? new int[n + 1] : inputArray;
+            if (inputArray == null)
+                for (int i = 0; i < n; i++) {
+                    if (i > 0) a[i] = a[i - 1] + rndInt(1, 20);
+                    else a[i] = rndInt(1, 20);
+                }
+            int m = inputm == null ? rndInt(1, 200) : inputm;
             AVLTree tree = new AVLTree();
             for (int i = 0; i < n; i++) {
                 tree.insert(a[i]);

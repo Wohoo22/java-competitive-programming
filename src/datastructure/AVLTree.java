@@ -86,8 +86,9 @@ public class AVLTree {
         if (node != null) {
             System.out.println("<___NODE___>");
             System.out.println("KEY: " + node.key + " ");
-            if (node.left != null) System.out.println("+ left: " + node.left.key);
-            if (node.right != null) System.out.println("+ right: " + node.right.key);
+            System.out.println("_childcount: " + node.childCount);
+            if (node.left != null) System.out.println("_left: " + node.left.key);
+            if (node.right != null) System.out.println("_right: " + node.right.key);
             System.out.println("");
             printNodesUtil(node.left);
             printNodesUtil(node.right);
@@ -95,26 +96,39 @@ public class AVLTree {
     }
 
     private static class Node {
-        int key, height;
+        int key, height, childCount;
         Node left, right;
 
         Node(int key) {
             this.key = key;
             this.height = 1;
+            this.childCount = 0;
         }
     }
 
     private static class Tree {
         private Node root;
 
-        // > caculate-height
+        // > caculate-child-count
 
-        private int caculateHeightUtil(Node n) {
-            return n == null ? 0 : n.height;
+        private int countChild(Node n) {
+            if (n == null) return 0;
+            int result = 0;
+            if (n.left != null) result += n.left.childCount + 1;
+            if (n.right != null) result += n.right.childCount + 1;
+            return result;
         }
 
+        // < cacuate-child-count
+
+        // > caculate-height
+
         private int caculateHeight(Node n) {
-            return n == null ? 0 : Math.max(caculateHeightUtil(n.left), caculateHeightUtil(n.right)) + 1;
+            if (n == null) return 0;
+            int result = 0;
+            if (n.left != null) result = Math.max(result, n.left.height);
+            if (n.right != null) result = Math.max(result, n.right.height);
+            return result + 1;
         }
 
         // < caculate-height
@@ -136,6 +150,8 @@ public class AVLTree {
             z.left = n;
             y.height = caculateHeight(y);
             z.height = caculateHeight(z);
+            y.childCount = countChild(y);
+            z.childCount = countChild(z);
             return y;
         }
 
@@ -155,6 +171,8 @@ public class AVLTree {
             y.right = p;
             y.height = caculateHeight(y);
             x.height = caculateHeight(x);
+            y.childCount = countChild(y);
+            x.childCount = countChild(x);
             return x;
         }
 
@@ -170,6 +188,7 @@ public class AVLTree {
             if (key > n.key) n.right = insert(n.right, key);
             if (key == n.key) return n;
             n.height = caculateHeight(n);
+            n.childCount = countChild(n);
             int balance = getBalance(n);
             if (balance > 1) {
                 if (key < n.left.key) return rightRotate(n);
@@ -201,11 +220,13 @@ public class AVLTree {
         private void countNodesLessThanUtil(Node n, int key) {
             if (n == null) return;
             if (key > n.key) {
-                countNodesLessThanAnswer += caculateHeight(n.left) + 1;
+                countNodesLessThanAnswer += 1;
+                if (n.left != null) countNodesLessThanAnswer += n.left.childCount + 1;
                 countNodesLessThanUtil(n.right, key);
             } else if (key < n.key) {
                 countNodesLessThanUtil(n.left, key);
             } else {
+                if (n.left != null) countNodesLessThanAnswer += n.left.childCount + 1;
                 return;
             }
         }
