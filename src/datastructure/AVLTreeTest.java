@@ -12,9 +12,10 @@ m = 92
     public static void main(String[] args) {
 //        printTree(new int[]{18, 34, 52, 65, 72});
 
-//        simpleTest();
+        simpleTest();
+
 //        countNodeLessThanTest(new int[]{8, 34, 52, 65, 72}, 65);
-//        countNodeLessThanTest(null, null);
+        countKeysLessThanTest(null, null);
         countOccurenceOfKeysLessThanTest(null, null);
     }
 
@@ -26,9 +27,9 @@ m = 92
     }
 
     private static void countOccurenceOfKeysLessThanTest(int[] inputArray, Integer inputm) {
-        int tests = rndInt(10000, 10000);
+        int tests = rndInt(1000, 1000);
         for (int test = 0; test < tests; test++) {
-            int n = inputArray == null ? rndInt(1, 20) : inputArray.length;
+            int n = inputArray == null ? rndInt(1, 1000) : inputArray.length;
             int a[] = inputArray == null ? new int[n + 1] : inputArray;
             if (inputArray == null)
                 for (int i = 0; i < n; i++) {
@@ -71,13 +72,14 @@ m = 92
                 }
             }
         }
-        System.out.print("OK " + tests + " tests.");
+        System.out.println("Count Occurence Of Keys Less Than Test");
+        System.out.println("OK " + tests + " tests.");
     }
 
-    private static void countNodeLessThanTest(int[] inputArray, Integer inputm) {
+    private static void countKeysLessThanTest(int[] inputArray, Integer inputm) {
         int tests = rndInt(1000, 1000);
         for (int test = 0; test < tests; test++) {
-            int n = inputArray == null ? rndInt(1, 100) : inputArray.length;
+            int n = inputArray == null ? rndInt(1, 1000) : inputArray.length;
             int a[] = inputArray == null ? new int[n + 1] : inputArray;
             if (inputArray == null)
                 for (int i = 0; i < n; i++) {
@@ -106,7 +108,8 @@ m = 92
                 }
             }
         }
-        System.out.print("OK " + tests + " tests.");
+        System.out.println("Count Keys Less Than Test");
+        System.out.println("OK " + tests + " tests.");
     }
 
     private static void simpleTest() {
@@ -120,7 +123,7 @@ m = 92
         System.out.println("Preorder traversal" +
                 " of constructed tree is : ");
         tree.preOrder();
-        tree.printNodes();
+//        tree.printNodes();
         /*
         Preorder traversal of the constructed AVL tree is
         30 20 10 25 40 50
