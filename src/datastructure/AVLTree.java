@@ -57,9 +57,9 @@ public class AVLTree {
     }
 
     public void insert(int key) {
-        tree.root = tree.insert(tree.root, key);
         int lastOcc = tree.keyOccurence.getOrDefault(key, 0);
         tree.keyOccurence.put(key, lastOcc + 1);
+        tree.root = tree.insert(tree.root, key);
     }
 
     public int countNodesLessThan(int key) {
