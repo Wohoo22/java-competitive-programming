@@ -4,12 +4,10 @@ import java.util.Random;
 
 public class AVLTreeTest {
     /*
-        WRONG ANSWER at index 4
-        + Expect: 3
-        + Real: 2
-        Input:
-        { 18, 34, 52, 65, 72, 73, 0, }
-        m = 65
+ERROR at index 17
+Input:
+{ 4, 4, 4, 20, 20, 0, 4, 4, 10, 11, 19, 8, 17, 4, 11, 7, 4, 4, 10, 8, 0, }
+m = 92
     */
     public static void main(String[] args) {
 //        printTree(new int[]{18, 34, 52, 65, 72});
@@ -28,7 +26,7 @@ public class AVLTreeTest {
     }
 
     private static void countOccurenceOfKeysLessThanTest(int[] inputArray, Integer inputm) {
-        int tests = rndInt(100, 100);
+        int tests = rndInt(10000, 10000);
         for (int test = 0; test < tests; test++) {
             int n = inputArray == null ? rndInt(1, 20) : inputArray.length;
             int a[] = inputArray == null ? new int[n + 1] : inputArray;
@@ -41,15 +39,27 @@ public class AVLTreeTest {
             int m = inputm == null ? rndInt(1, 200) : inputm;
             AVLTree tree = new AVLTree();
             for (int i = 0; i < n; i++) {
-                tree.insert(a[i]);
-                int expect = 0;
-                for (int j = 0; j <= i; j++)
-                    if (a[j] < m) expect++;
-                int real = tree.countOccurenceOfKeysLessThan(m);
-                if (expect != real) {
-                    System.out.println("WRONG ANSWER at index " + i);
-                    System.out.println("+ Expect: " + expect);
-                    System.out.println("+ Real: " + real);
+                try {
+                    tree.insert(a[i]);
+                    int expect = 0;
+                    for (int j = 0; j <= i; j++)
+                        if (a[j] < m) expect++;
+                    int real = tree.countOccurenceOfKeysLessThan(m);
+                    if (expect != real) {
+                        System.out.println("WRONG ANSWER at index " + i);
+                        System.out.println("+ Expect: " + expect);
+                        System.out.println("+ Real: " + real);
+                        System.out.println("Input:");
+                        System.out.print("{ ");
+                        for (int v : a) System.out.print(v + ", ");
+                        System.out.print("}\n");
+                        System.out.println("m = " + m);
+                        System.out.println("");
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("ERROR at index " + i);
                     System.out.println("Input:");
                     System.out.print("{ ");
                     for (int v : a) System.out.print(v + ", ");
@@ -57,6 +67,7 @@ public class AVLTreeTest {
                     System.out.println("m = " + m);
                     System.out.println("");
                     return;
+
                 }
             }
         }

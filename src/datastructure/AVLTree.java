@@ -164,16 +164,20 @@ public class AVLTree {
                    / \
                   k   p
             */
-            Node y = z.left, n = y.right;
+            Node y = z.left;
+            Node n = y.right;
             y.right = z;
             z.left = n;
-            y.height = caculateHeight(y);
+            // height
             z.height = caculateHeight(z);
-            // z is under y -> must update z first
+            y.height = caculateHeight(y);
+            // child count
             z.childCount = countChild(z);
             y.childCount = countChild(y);
+            // child occurence
             z.childOccurence = countChildOccurence(z);
             y.childOccurence = countChildOccurence(y);
+
             return y;
         }
 
@@ -191,11 +195,13 @@ public class AVLTree {
             Node p = x.left;
             x.left = y;
             y.right = p;
+            // height
             y.height = caculateHeight(y);
             x.height = caculateHeight(x);
-            // y is under x -> must update y first
+            // child count
             y.childCount = countChild(y);
             x.childCount = countChild(x);
+            // child occurence
             y.childOccurence = countChildOccurence(y);
             x.childOccurence = countChildOccurence(x);
             return x;
