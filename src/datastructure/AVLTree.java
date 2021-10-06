@@ -66,7 +66,7 @@ public class AVLTree {
         return tree.countKeysLessThan(key);
     }
 
-    public int countOccurenceOfKeysLessThanUtil(int key) {
+    public int countOccurenceOfKeysLessThan(int key) {
         return tree.countOccurenceOfKeysLessThan(key);
     }
 
@@ -169,10 +169,11 @@ public class AVLTree {
             z.left = n;
             y.height = caculateHeight(y);
             z.height = caculateHeight(z);
-            y.childCount = countChild(y);
+            // z is under y -> must update z first
             z.childCount = countChild(z);
-            y.childOccurence = countChildOccurence(y);
+            y.childCount = countChild(y);
             z.childOccurence = countChildOccurence(z);
+            y.childOccurence = countChildOccurence(y);
             return y;
         }
 
@@ -192,6 +193,7 @@ public class AVLTree {
             y.right = p;
             y.height = caculateHeight(y);
             x.height = caculateHeight(x);
+            // y is under x -> must update y first
             y.childCount = countChild(y);
             x.childCount = countChild(x);
             y.childOccurence = countChildOccurence(y);

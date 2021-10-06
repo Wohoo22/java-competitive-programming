@@ -30,7 +30,7 @@ public class AVLTreeTest {
     private static void countOccurenceOfKeysLessThanTest(int[] inputArray, Integer inputm) {
         int tests = rndInt(100, 100);
         for (int test = 0; test < tests; test++) {
-            int n = inputArray == null ? rndInt(1, 10) : inputArray.length;
+            int n = inputArray == null ? rndInt(1, 20) : inputArray.length;
             int a[] = inputArray == null ? new int[n + 1] : inputArray;
             if (inputArray == null)
                 for (int i = 0; i < n; i++) {
@@ -45,7 +45,7 @@ public class AVLTreeTest {
                 int expect = 0;
                 for (int j = 0; j <= i; j++)
                     if (a[j] < m) expect++;
-                int real = tree.countOccurenceOfKeysLessThanUtil(m);
+                int real = tree.countOccurenceOfKeysLessThan(m);
                 if (expect != real) {
                     System.out.println("WRONG ANSWER at index " + i);
                     System.out.println("+ Expect: " + expect);
