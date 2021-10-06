@@ -70,6 +70,10 @@ public class AVLTree {
         return tree.countOccurenceOfKeysLessThan(key);
     }
 
+    public int getKeyOccurence(int key) {
+        return tree.keyOccurence.getOrDefault(key, 0);
+    }
+
     public void preOrder() {
         preOrderUtil(tree.root);
         System.out.println("");

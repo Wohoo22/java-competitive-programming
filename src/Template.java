@@ -4,12 +4,11 @@ import java.util.StringTokenizer;
 
 public class Template {
 
-    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
-    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
-    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
-    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_out";
-
+    private static final String checkerSolutionOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.solution.out";
+    private static final String checkerInput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.in";
+    private static final String checkerBruteforcesOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.bruteforces.out";
+    private static final String fileInput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_in";
+    private static final String fileOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_out";
 
     private static class Config {
         private static final boolean useInputFile = true;
