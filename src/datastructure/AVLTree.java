@@ -50,29 +50,92 @@ public class AVLTree {
 
      */
 
-    private Tree tree;
+    private InternalTree tree;
 
     public AVLTree() {
-        tree = new Tree();
+        tree = new InternalTree();
     }
 
-    public void insert(int key) {
-        int lastOcc = tree.keyOccurence.getOrDefault(key, 0);
-        tree.keyOccurence.put(key, lastOcc + 1);
-        tree.root = tree.insert(tree.root, key);
+    // > search
+
+    public boolean contains(int key) {
+        return getKeyOccurence(key) > 0;
     }
+
+    public Integer findMinimumKeyGreaterThan(int key) {
+        return 0;
+    }
+
+    public Integer findMaximumKeyLessThan(int key) {
+        tree.findMaximumKeyLessThanResult = null;
+        tree.findMaximumKeyLessThan(tree.root, key);
+        return tree.findMaximumKeyLessThanResult;
+    }
+
+    // < search
+
+    // > insertion and deletion
+
+    public void insert(int key) {
+        int lastOcc = tree.keyOccurenceMap.getOrDefault(key, 0);
+        tree.keyOccurenceMap.put(key, lastOcc + 1);
+        tree.root = tree.insert(tree.root, key);
+        tree.totalKeyOccurence++;
+    }
+
+    public void remove(int key) {
+
+    }
+
+    // < insertion and deletion
+
+    // > count-keys
 
     public int countKeysLessThan(int key) {
         return tree.countKeysLessThan(key);
     }
 
+    public int countKeysGreaterThan(int key) {
+        int total = getTotalNumberOfKeys();
+        int ans = total - countKeysLessThan(key);
+        if (contains(key)) ans--;
+        return ans;
+    }
+
+    // < count-keys
+
+    // > count-occurence-of-keys
+
     public int countOccurenceOfKeysLessThan(int key) {
         return tree.countOccurenceOfKeysLessThan(key);
     }
 
-    public int getKeyOccurence(int key) {
-        return tree.keyOccurence.getOrDefault(key, 0);
+    public int countOccurenceOfKeysGreaterThan(int key) {
+        int lt = countOccurenceOfKeysLessThan(key);
+        int eq = getKeyOccurence(key);
+        return getTotalKeyOccurence() - lt - eq;
     }
+
+    public int getKeyOccurence(int key) {
+        return tree.keyOccurenceMap.getOrDefault(key, 0);
+    }
+
+    // > count-occurence-of-keys
+
+    // > get-total
+
+    public int getTotalKeyOccurence() {
+        return tree.totalKeyOccurence;
+    }
+
+    public int getTotalNumberOfKeys() {
+        if (tree.root == null) return 0;
+        return tree.root.childCount + 1;
+    }
+
+    // < get-total
+
+    // > pre-order
 
     public void preOrder() {
         preOrderUtil(tree.root);
@@ -87,13 +150,17 @@ public class AVLTree {
         }
     }
 
+    // < pre-order
+
+    // > print-nodes
+
     public void printNodes() {
         printNodesUtil(tree.root);
     }
 
     private void printNodesUtil(Node node) {
         if (node != null) {
-            System.out.println("<<<<NODE>>>>");
+            System.out.println("<<<< NODE >>>>");
             System.out.println("KEY: " + node.key + " ");
             System.out.println("_childcount: " + node.childCount);
             if (node.left != null) System.out.println("_left: " + node.left.key);
@@ -103,6 +170,8 @@ public class AVLTree {
             printNodesUtil(node.right);
         }
     }
+
+    // > print-nodes
 
     private static class Node {
         int key, height, childCount, childOccurence;
@@ -116,17 +185,18 @@ public class AVLTree {
         }
     }
 
-    private static class Tree {
+    private static class InternalTree {
+        int totalKeyOccurence = 0;
         private Node root;
-        private Map<Integer, Integer> keyOccurence = new HashMap<>();
+        private Map<Integer, Integer> keyOccurenceMap = new HashMap<>();
 
         // > cacculate-child-occurence
 
         private int countChildOccurence(Node n) {
             if (n == null) return 0;
             int result = 0;
-            if (n.left != null) result += n.left.childOccurence + keyOccurence.get(n.left.key);
-            if (n.right != null) result += n.right.childOccurence + keyOccurence.get(n.right.key);
+            if (n.left != null) result += n.left.childOccurence + keyOccurenceMap.get(n.left.key);
+            if (n.right != null) result += n.right.childOccurence + keyOccurenceMap.get(n.right.key);
             return result;
         }
 
@@ -282,20 +352,37 @@ public class AVLTree {
         private void countOccurenceOfKeysLessThanUtil(Node n, int key) {
             if (n == null) return;
             if (key > n.key) {
-                countOccurenceOfKeysLessThanResult += keyOccurence.get(n.key);
+                countOccurenceOfKeysLessThanResult += keyOccurenceMap.get(n.key);
                 if (n.left != null)
-                    countOccurenceOfKeysLessThanResult += n.left.childOccurence + keyOccurence.get(n.left.key);
+                    countOccurenceOfKeysLessThanResult += n.left.childOccurence + keyOccurenceMap.get(n.left.key);
                 countOccurenceOfKeysLessThanUtil(n.right, key);
             } else if (key < n.key) {
                 countOccurenceOfKeysLessThanUtil(n.left, key);
             } else {
                 if (n.left != null)
-                    countOccurenceOfKeysLessThanResult += n.left.childOccurence + keyOccurence.get(n.left.key);
+                    countOccurenceOfKeysLessThanResult += n.left.childOccurence + keyOccurenceMap.get(n.left.key);
                 return;
             }
         }
 
         // < count-occurence-of-keys-less-than
 
+        // > find-maximum-key-less-than
+
+        Integer findMaximumKeyLessThanResult;
+
+        private void findMaximumKeyLessThan(Node n, int key) {
+            if (n == null) return;
+            if (key > n.key) {
+                findMaximumKeyLessThanResult = n.key;
+                findMaximumKeyLessThan(n.right, key);
+            } else if (key < n.key) {
+                findMaximumKeyLessThan(n.left, key);
+            } else {
+                findMaximumKeyLessThan(n.left, key);
+            }
+        }
+
+        // < find-maximum-key-less-than
     }
 }
