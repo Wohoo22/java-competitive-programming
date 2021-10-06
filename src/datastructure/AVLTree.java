@@ -62,8 +62,12 @@ public class AVLTree {
         tree.root = tree.insert(tree.root, key);
     }
 
-    public int countNodesLessThan(int key) {
+    public int countKeysLessThan(int key) {
         return tree.countKeysLessThan(key);
+    }
+
+    public int countOccurenceOfKeysLessThanUtil(int key) {
+        return tree.countOccurenceOfKeysLessThan(key);
     }
 
     public void preOrder() {

@@ -16,15 +16,15 @@ public class AVLTreeTest {
 
 //        simpleTest();
 //        countNodeLessThanTest(new int[]{8, 34, 52, 65, 72}, 65);
-        countNodeLessThanTest(null, null);
-//        countOccurenceOfKeysLessThanTest(null, null);
+//        countNodeLessThanTest(null, null);
+        countOccurenceOfKeysLessThanTest(null, null);
     }
 
     private static void printTree(int[] insertion) {
         AVLTree tree = new AVLTree();
         for (int k : insertion) tree.insert(k);
         tree.printNodes();
-        tree.countNodesLessThan(482);
+        tree.countKeysLessThan(482);
     }
 
     private static void countOccurenceOfKeysLessThanTest(int[] inputArray, Integer inputm) {
@@ -45,7 +45,7 @@ public class AVLTreeTest {
                 int expect = 0;
                 for (int j = 0; j <= i; j++)
                     if (a[j] < m) expect++;
-                int real = tree.countNodesLessThan(m);
+                int real = tree.countOccurenceOfKeysLessThanUtil(m);
                 if (expect != real) {
                     System.out.println("WRONG ANSWER at index " + i);
                     System.out.println("+ Expect: " + expect);
@@ -80,7 +80,7 @@ public class AVLTreeTest {
                 int expect = 0;
                 for (int j = 0; j <= i; j++)
                     if (a[j] < m) expect++;
-                int real = tree.countNodesLessThan(m);
+                int real = tree.countKeysLessThan(m);
                 if (expect != real) {
                     System.out.println("WRONG ANSWER at index " + i);
                     System.out.println("+ Expect: " + expect);
