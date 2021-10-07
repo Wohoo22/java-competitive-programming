@@ -1,6 +1,7 @@
 package datastructure;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AVLTree {
@@ -76,15 +77,21 @@ public class AVLTree {
 
     // > insertion and deletion
 
+    private int getLastOccurence(int key) {
+        return tree.keyOccurenceMap.getOrDefault(key, 0);
+    }
+
     public void insert(int key) {
-        int lastOcc = tree.keyOccurenceMap.getOrDefault(key, 0);
-        tree.keyOccurenceMap.put(key, lastOcc + 1);
-        tree.root = tree.insert(tree.root, key);
+        tree.keyOccurenceMap.put(key, getLastOccurence(key) + 1);
         tree.totalKeyOccurence++;
+        tree.root = tree.insert(tree.root, key);
     }
 
     public void remove(int key) {
-
+        int lastOcc = getLastOccurence(key);
+        if (lastOcc > 0) tree.keyOccurenceMap.put(key, lastOcc--);
+        tree.totalKeyOccurence--;
+        tree.root = tree.remove(tree.root, key);
     }
 
     // < insertion and deletion
@@ -172,6 +179,36 @@ public class AVLTree {
     }
 
     // > print-nodes
+
+    // > test-helper
+
+    public void checkTree(Map<Integer, List<Integer>> childs) {
+        checkUtil(tree.root, childs);
+    }
+
+    private void checkUtil(Node n, Map<Integer, List<Integer>> childsMap) {
+        List<Integer> childs = childsMap.get(n);
+        Integer expectedLeft = childs.get(0), expectedRight = childs.get(1);
+        if (n.left == null) check(null, expectedLeft, "CHECK_TREE");
+        if (n.right == null) check(null, expectedRight, "CHECK_TREE");
+        Integer realLeft = n.left.key, realRight = n.right.key;
+        check(realLeft, expectedLeft, "CHECK_TREE");
+        check(realRight, expectedRight, "CHECK_TREE");
+    }
+
+    private void check(Object real, Object expected, String test) {
+        if (real == null || expected == null) {
+            if (real != expected) makeErrorMsg(real, expected, test);
+        } else {
+            if (!real.equals(expected)) makeErrorMsg(real, expected, test);
+        }
+    }
+
+    private void makeErrorMsg(Object real, Object expected, String test) {
+        throw new Error("[" + test + "] assertion false, expect " + expected + " but found " + real);
+    }
+
+    // < test-helper
 
     private static class Node {
         int key, height, childCount, childOccurence;

@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class AVLTreeTest {
     public static void main(String[] args) {
-        insertTest();
+        removeTest();
     }
 
     private static void printTree(int[] insertion) {
@@ -21,6 +21,42 @@ public class AVLTreeTest {
         countKeysLessThanTest(null, null);
         countOccurenceOfKeysLessThanTest(null, null);
         findMaximumKeyLessThanTest(null);
+    }
+
+    private static void removeTest() {
+        AVLTree tree = new AVLTree();
+        tree.insert(9);
+        tree.insert(5);
+        tree.insert(10);
+        tree.insert(0);
+        tree.insert(6);
+        tree.insert(11);
+        tree.insert(-1);
+        tree.insert(1);
+        tree.insert(2);
+        tree.printNodes();
+        System.out.println("[REMOVE_TEST] Preorder traversal of constructed tree is : ");
+        tree.preOrder();
+        tree.remove(10);
+        System.out.println("[REMOVE_TEST] Preorder traversal after deletion of 10 :");
+        tree.preOrder();
+        tree.printNodes();
+    }
+
+    private static void insertTest() {
+        AVLTree tree = new AVLTree();
+        tree.insert(10);
+        tree.insert(20);
+        tree.insert(30);
+        tree.insert(40);
+        tree.insert(50);
+        tree.insert(25);
+        System.out.println("Insert test: ");
+        tree.preOrder();
+        /*
+        Preorder traversal of the constructed AVL tree is
+        30 20 10 25 40 50
+         */
     }
 
     private static void findMaximumKeyLessThanTest(int[] array) {
@@ -66,26 +102,6 @@ public class AVLTreeTest {
         System.out.println("OK " + tests + " tests.");
     }
 
-    private static void insertTest() {
-        AVLTree tree = new AVLTree();
-        tree.insert(10);
-        tree.insert(20);
-        tree.insert(30);
-        tree.insert(40);
-        tree.insert(50);
-        tree.insert(25);
-        tree.preOrder();
-        /*
-        Preorder traversal of the constructed AVL tree is
-        30 20 10 25 40 50
-         */
-//        Scanner sc = new Scanner((Readable) System.out);
-//        String line = sc.nextLine();
-//        if (!line.equals("30 20 10 25 40 50 ")) {
-//            System.out.println("Wrong anwer in insert test");
-//        }
-//        sc.close();
-    }
 
     private static void countOccurenceOfKeysLessThanTest(int[] inputArray, Integer inputm) {
         int tests = rndInt(1000, 1000);
