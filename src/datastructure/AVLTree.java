@@ -187,13 +187,14 @@ public class AVLTree {
     }
 
     private void checkUtil(Node n, Map<Integer, List<Integer>> childsMap) {
+        String test = "CHECK_TREE";
         List<Integer> childs = childsMap.get(n);
         Integer expectedLeft = childs.get(0), expectedRight = childs.get(1);
-        if (n.left == null) check(null, expectedLeft, "CHECK_TREE");
-        if (n.right == null) check(null, expectedRight, "CHECK_TREE");
+        if (n.left == null) check(null, expectedLeft, test);
+        if (n.right == null) check(null, expectedRight, test);
         Integer realLeft = n.left.key, realRight = n.right.key;
-        check(realLeft, expectedLeft, "CHECK_TREE");
-        check(realRight, expectedRight, "CHECK_TREE");
+        check(realLeft, expectedLeft, test);
+        check(realRight, expectedRight, test);
     }
 
     private void check(Object real, Object expected, String test) {
@@ -205,7 +206,10 @@ public class AVLTree {
     }
 
     private void makeErrorMsg(Object real, Object expected, String test) {
-        throw new Error("[" + test + "] assertion false, expect " + expected + " but found " + real);
+        throw new Error("[test] assertion false, expect {expect} but found {real}"
+                .replace("test", test)
+                .replace("{expect}", expected.toString())
+                .replace("{real}", real.toString()));
     }
 
     // < test-helper
