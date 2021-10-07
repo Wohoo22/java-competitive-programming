@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AVLTree {
-    /* <<<<< INSERTION >>>>>
+    /* <<<<< INTUITION >>>>>
 
     ### LEFT LEFT CASE
 
@@ -212,7 +212,7 @@ public class AVLTree {
             return result;
         }
 
-        // < cacuate-child-count
+        // < caculate-child-count
 
         // > caculate-height
 
@@ -287,24 +287,31 @@ public class AVLTree {
             return n == null ? 0 : caculateHeight(n.left) - caculateHeight(n.right);
         }
 
-        private Node insert(Node n, int key) {
-            if (n == null) return new Node(key);
-            if (key < n.key) n.left = insert(n.left, key);
-            if (key > n.key) n.right = insert(n.right, key);
-            if (key == n.key) return n;
+        // > insert and remove
+
+        private void updateInformation(Node n) {
+            if (n == null) return;
             n.height = caculateHeight(n);
             n.childCount = countChild(n);
             n.childOccurence = countChildOccurence(n);
+        }
+
+        private Node makeBalance(Node n, int key) {
+            if (n == null) return n;
             int balance = getBalance(n);
             if (balance > 1) {
+                // Left left case
                 if (key < n.left.key) return rightRotate(n);
+                // Left right case
                 if (key > n.left.key) {
                     n.left = leftRotate(n.left);
                     return rightRotate(n);
                 }
             }
             if (balance < -1) {
+                // Right right case
                 if (key > n.right.key) return leftRotate(n);
+                //  Right left case
                 if (key < n.right.key) {
                     n.right = rightRotate(n.right);
                     return leftRotate(n);
@@ -312,6 +319,49 @@ public class AVLTree {
             }
             return n;
         }
+
+        private Node insert(Node n, int key) {
+            if (n == null) return new Node(key);
+            if (key < n.key) n.left = insert(n.left, key);
+            if (key > n.key) n.right = insert(n.right, key);
+            if (key == n.key) return n;
+            updateInformation(n);
+            return makeBalance(n, key);
+        }
+
+        private Node minKeyNode(Node n) {
+            if (n.left == null) return n;
+            return minKeyNode(n.left);
+        }
+
+        private Node remove(Node n, int key) {
+            if (n == null) return n;
+            if (key < n.key) n.left = remove(n.left, key);
+            if (key > n.key) n.right = remove(n.right, key);
+            if (key == n.key) {
+                if (n.left == null || n.right == null) {
+                    /*
+                    Case n.left or n.right is null:
+                    => Replace n with the not null one
+                     */
+                    n = n.left == null ? n.right : n.left;
+                } else {
+                    /*
+                    Case n.left and n.right is not null:
+                    => Find min node x in the n.right
+                    => Replace n.key with x.key
+                    => Remove x in the n.right
+                     */
+                    Node tmp = minKeyNode(n.right);
+                    n.key = tmp.key;
+                    n.right = remove(n.right, tmp.key);
+                }
+            }
+            updateInformation(n);
+            return makeBalance(n, key);
+        }
+
+        // < insert and remove
 
         // > count-node-less-than
 

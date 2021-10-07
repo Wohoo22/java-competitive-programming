@@ -1,29 +1,90 @@
 package datastructure;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class AVLTreeTest {
-    /*
-ERROR at index 17
-Input:
-{ 4, 4, 4, 20, 20, 0, 4, 4, 10, 11, 19, 8, 17, 4, 11, 7, 4, 4, 10, 8, 0, }
-m = 92
-    */
     public static void main(String[] args) {
-//        printTree(new int[]{18, 34, 52, 65, 72});
-
-        simpleTest();
-
-//        countNodeLessThanTest(new int[]{8, 34, 52, 65, 72}, 65);
-        countKeysLessThanTest(null, null);
-        countOccurenceOfKeysLessThanTest(null, null);
+        insertTest();
     }
 
     private static void printTree(int[] insertion) {
         AVLTree tree = new AVLTree();
         for (int k : insertion) tree.insert(k);
         tree.printNodes();
-        tree.countKeysLessThan(482);
+    }
+
+    private static void runAllTest() {
+        insertTest();
+        countKeysLessThanTest(null, null);
+        countOccurenceOfKeysLessThanTest(null, null);
+        findMaximumKeyLessThanTest(null);
+    }
+
+    private static void findMaximumKeyLessThanTest(int[] array) {
+        int tests = array == null ? rndInt(500, 500) : 1;
+        for (int test = 0; test < tests; test++) {
+            int n = array == null ? rndInt(1, 1000) : array.length;
+            int a[] = new int[n];
+            for (int i = 0; i < n; i++) {
+                if (array != null) a[i] = array[i];
+                else {
+                    a[i] = rndInt(1, 100);
+                }
+            }
+            AVLTree tree = new AVLTree();
+            List<Integer> prefix = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                prefix.add(a[i]);
+                prefix.sort(Integer::compareTo);
+                Integer expected = null;
+                for (int j = 0; j <= i; j++) {
+                    if (prefix.get(j) == a[i]) {
+                        if (j > 0) expected = prefix.get(j - 1);
+                        break;
+                    }
+                }
+                tree.insert(a[i]);
+                Integer real = tree.findMaximumKeyLessThan(a[i]);
+                if (expected == null && real == null)
+                    continue;
+                if (!expected.equals(real)) {
+                    System.out.println("WRONG ANSWER at index " + i);
+                    System.out.println("+ Expect: " + expected);
+                    System.out.println("+ Real: " + real);
+                    System.out.println("Input:");
+                    System.out.print("{ ");
+                    for (int v : a) System.out.print(v + ", ");
+                    System.out.print("}\n");
+                    return;
+                }
+            }
+        }
+        System.out.println("Find Maximum Key Less Than Test");
+        System.out.println("OK " + tests + " tests.");
+    }
+
+    private static void insertTest() {
+        AVLTree tree = new AVLTree();
+        tree.insert(10);
+        tree.insert(20);
+        tree.insert(30);
+        tree.insert(40);
+        tree.insert(50);
+        tree.insert(25);
+        tree.preOrder();
+        /*
+        Preorder traversal of the constructed AVL tree is
+        30 20 10 25 40 50
+         */
+//        Scanner sc = new Scanner((Readable) System.out);
+//        String line = sc.nextLine();
+//        if (!line.equals("30 20 10 25 40 50 ")) {
+//            System.out.println("Wrong anwer in insert test");
+//        }
+//        sc.close();
     }
 
     private static void countOccurenceOfKeysLessThanTest(int[] inputArray, Integer inputm) {
@@ -110,24 +171,6 @@ m = 92
         }
         System.out.println("Count Keys Less Than Test");
         System.out.println("OK " + tests + " tests.");
-    }
-
-    private static void simpleTest() {
-        AVLTree tree = new AVLTree();
-        tree.insert(10);
-        tree.insert(20);
-        tree.insert(30);
-        tree.insert(40);
-        tree.insert(50);
-        tree.insert(25);
-        System.out.println("Preorder traversal" +
-                " of constructed tree is : ");
-        tree.preOrder();
-//        tree.printNodes();
-        /*
-        Preorder traversal of the constructed AVL tree is
-        30 20 10 25 40 50
-         */
     }
 
     private static int rndInt(int min, int max) {
