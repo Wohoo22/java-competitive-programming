@@ -64,7 +64,9 @@ public class AVLTree {
     }
 
     public Integer findMinimumKeyGreaterThan(int key) {
-        return 0;
+        tree.findMinimumKeyGreaterThanResult = null;
+        tree.findMinimumKeyGreaterThan(tree.root, key);
+        return tree.findMinimumKeyGreaterThanResult;
     }
 
     public Integer findMaximumKeyLessThan(int key) {
@@ -72,6 +74,7 @@ public class AVLTree {
         tree.findMaximumKeyLessThan(tree.root, key);
         return tree.findMaximumKeyLessThanResult;
     }
+
 
     // < search
 
@@ -475,5 +478,23 @@ public class AVLTree {
         }
 
         // < find-maximum-key-less-than
+
+        // > find-minimum-key-greater-than
+
+        Integer findMinimumKeyGreaterThanResult;
+
+        private void findMinimumKeyGreaterThan(Node n, int key) {
+            if (n == null) return;
+            if (key < n.key) {
+                findMinimumKeyGreaterThanResult = n.key;
+                findMinimumKeyGreaterThan(n.left, key);
+            } else if (key > n.key) {
+                findMinimumKeyGreaterThan(n.right, key);
+            } else {
+                findMinimumKeyGreaterThan(n.right, key);
+            }
+        }
+
+        // < find-minimum-key-greater-than
     }
 }

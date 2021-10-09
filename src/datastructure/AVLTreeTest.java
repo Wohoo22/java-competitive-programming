@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class AVLTreeTest {
     public static void main(String[] args) {
-        removeTest();
+        runAllTest();
     }
 
     private static void printTree(int[] insertion) {
@@ -18,9 +18,11 @@ public class AVLTreeTest {
 
     private static void runAllTest() {
         insertTest();
+        removeTest();
         countKeysLessThanTest(null, null);
         countOccurenceOfKeysLessThanTest(null, null);
         findMaximumKeyLessThanTest(null);
+        findMinimumKeyGreaterThan(null);
     }
 
     private static void removeTest() {
@@ -57,6 +59,49 @@ public class AVLTreeTest {
         Preorder traversal of the constructed AVL tree is
         30 20 10 25 40 50
          */
+    }
+
+    private static void findMinimumKeyGreaterThan(int[] array) {
+        int tests = array == null ? rndInt(1000, 1000) : 1;
+        for (int test = 0; test < tests; test++) {
+            int n = array == null ? rndInt(1, 1000) : array.length;
+            int a[] = new int[n];
+            for (int i = 0; i < n; i++) {
+                if (array != null) a[i] = array[i];
+                else {
+                    a[i] = rndInt(1, 100);
+                }
+            }
+            AVLTree tree = new AVLTree();
+            List<Integer> prefix = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                prefix.add(a[i]);
+                prefix.sort(Integer::compareTo);
+                Integer expected = null;
+                for (int j = 0; j <= i; j++) {
+                    if (prefix.get(j) > a[i]) {
+                        expected = prefix.get(j);
+                        break;
+                    }
+                }
+                tree.insert(a[i]);
+                Integer real = tree.findMinimumKeyGreaterThan(a[i]);
+                if (expected == null && real == null)
+                    continue;
+                if (!expected.equals(real)) {
+                    System.out.println("WRONG ANSWER at index " + i);
+                    System.out.println("+ Expect: " + expected);
+                    System.out.println("+ Real: " + real);
+                    System.out.println("Input:");
+                    System.out.print("{ ");
+                    for (int v : a) System.out.print(v + ", ");
+                    System.out.print("}\n");
+                    return;
+                }
+            }
+        }
+        System.out.println("Find Maximum Key Less Than Test");
+        System.out.println("OK " + tests + " tests.");
     }
 
     private static void findMaximumKeyLessThanTest(int[] array) {
