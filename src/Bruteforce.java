@@ -1,15 +1,16 @@
+import java.awt.*;
 import java.io.*;
 import java.math.BigInteger;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.List;
 
 public class Bruteforce {
 
-    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
-    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
-    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
-    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_out";
-
+    private static final String checkerSolutionOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.solution.out";
+    private static final String checkerInput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.in";
+    private static final String checkerBruteforcesOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.bruteforces.out";
+    private static final String fileInput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_in";
+    private static final String fileOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_out";
 
     private static class Config {
         private static final boolean useInputFile = true;
@@ -33,10 +34,174 @@ public class Bruteforce {
 
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        int[][] graph = new int[n + 1][n + 1];
-        for (int i = 1; i <= n; i++) {
-
+        List<int[]> points = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            points.add(new int[]{sc.nextInt(), sc.nextInt()});
         }
+        Map<Integer, List<int[]>> xSet = new HashMap<>();
+        Map<Integer, List<int[]>> ySet = new HashMap<>();
+        for (int[] p : points) {
+            xSet.put(p[0], new ArrayList<>());
+            ySet.put(p[1], new ArrayList<>());
+        }
+        for (int[] p : points) {
+            xSet.get(p[0]).add(p);
+            ySet.get(p[1]).add(p);
+        }
+        List<List<int[]>> existSet = new ArrayList<>();
+        int ans = 0;
+        Object[][] map = new Object[][]{
+                new Object[]{
+                        0, 0, "C"
+                },
+                new Object[]{
+                        0, 1, "B"
+                },
+                new Object[]{
+                        0, 2, "A"
+                },
+                new Object[]{
+                        1, 1, "D"
+                },
+                new Object[]{
+                        1, 0, "E"
+                },
+                new Object[]{
+                        2, 2, "G"
+                },
+                new Object[]{
+                        2, 0, "F"
+                },
+        };
+        for (Map.Entry<Integer, List<int[]>> entry : xSet.entrySet()) {
+            entry.getValue().sort(Comparator.comparingInt(x -> x[1]));
+            for (int i = 0; i < entry.getValue().size() - 1; i++) {
+                int[] fir = entry.getValue().get(i);
+                int[] sec = entry.getValue().get(i + 1);
+                for (int[] thir : points) {
+                    if (!thir.equals(fir) && !thir.equals(sec)
+                            && !exist(existSet, fir, sec, thir)
+                            && validTri(fir, sec, thir)
+                            && !hasPointBtw(fir, thir, points)
+                            && !hasPointBtw(sec, thir, points)) {
+                        ans++;
+                        existSet.add(Arrays.asList(fir, sec, thir));
+//                        System.out.println("OK " + str(fir, map) + str(sec, map) + str(thir, map));
+                    } else {
+//                        System.out.println("Not OK " + str(fir, map) + str(sec, map) + str(thir, map));
+                    }
+                }
+            }
+        }
+//        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        for (Map.Entry<Integer, List<int[]>> entry : ySet.entrySet()) {
+            entry.getValue().sort(Comparator.comparingInt(x -> x[0]));
+            for (int i = 0; i < entry.getValue().size() - 1; i++) {
+                int[] fir = entry.getValue().get(i);
+                int[] sec = entry.getValue().get(i + 1);
+                for (int[] thir : points) {
+                    if (!thir.equals(fir) && !thir.equals(sec)
+                            && !exist(existSet, fir, sec, thir)
+                            && validTri(fir, sec, thir)
+                            && !hasPointBtw(fir, thir, points)
+                            && !hasPointBtw(sec, thir, points)) {
+                        ans++;
+                        existSet.add(Arrays.asList(fir, sec, thir));
+//                        System.out.println("OK " + str(fir, map) + str(sec, map) + str(thir, map));
+                    } else {
+//                        System.out.println("Not OK " + str(fir, map) + str(sec, map) + str(thir, map));
+                    }
+                }
+            }
+        }
+        writer.write(ans + "");
+        // C B E
+//        check(new int[]{0, 0}, new int[]{0, 1}, new int[]{1, 0}, points);
+    }
+
+    static void check(int[] fir, int[] sec, int[] thir, List<int[]> points) {
+        System.out.println("### CHECK");
+        if (!validTri(fir, sec, thir))
+            System.out.println("NOT VALID TRIANGLE");
+        if (hasPointBtw(fir, thir, points))
+            System.out.println("Has point between first and third");
+        if (hasPointBtw(sec, thir, points))
+            System.out.println("Has point between second and third");
+    }
+
+    static String str(int[] p, Object[][] map) {
+        for (Object[] o : map) {
+            if ((int) o[0] == p[0] && (int) o[1] == p[1])
+                return o[2] + " ";
+        }
+        return "";
+    }
+
+    static boolean hasPointBtw(int[] x, int[] y, List<int[]> points) {
+        int x1 = Math.min(x[0], y[0]), x2 = Math.max(x[0], y[0]);
+        int y1 = Math.min(x[1], y[1]), y2 = Math.max(x[1], y[1]);
+        for (int[] z : points) {
+            if (!eq(x, z) && !eq(y, z) && collinear(x[0], x[1], y[0], y[1], z[0], z[1])
+                    && x1 <= z[0] && z[0] <= x2
+                    && y1 <= z[1] && z[1] <= y2
+            )
+                return true;
+        }
+        return false;
+    }
+
+    static boolean collinear(int x1, int y1, int x2,
+                             int y2, int x3, int y3) {
+        int a = x1 * (y2 - y3) +
+                x2 * (y3 - y1) +
+                x3 * (y1 - y2);
+        return a == 0;
+    }
+
+
+    static boolean eq(int[] a, int[] b) {
+        return a[0] == b[0] && a[1] == b[1];
+    }
+
+    static boolean validTri(int[]... points) {
+        int x1 = points[0][0], y1 = points[0][1];
+        int x2 = points[1][0], y2 = points[1][1];
+        int x3 = points[2][0], y3 = points[2][1];
+        return vc(x1, y1, x2, y2, x3, y3) || vc(x1, y1, x3, y3, x2, y2)
+                || vc(x2, y2, x1, y1, x3, y3) || vc(x3, y3, x1, y1, x2, y2)
+                || vc(x2, y2, x3, y3, x1, y1) || vc(x3, y3, x2, y2, x1, y1);
+    }
+
+    static boolean vc(int x1, int y1, int x2,
+                      int y2, int x3, int y3) {
+
+        double a = distance(x1, y1, x2, y2);
+        double b = distance(x1, y1, x3, y3);
+        double c = distance(x2, y2, x3, y3);
+        return a == b
+                && distancePow(x2, y2, x3, y3) == distancePow(x1, y1, x2, y2) + distancePow(x1, y1, x3, y3);
+    }
+
+    static double distance(int x1, int y1, int x2, int y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    static double distancePow(int x1, int y1, int x2, int y2) {
+        return Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
+    }
+
+    static boolean exist(List<List<int[]>> existSet, int[]... points) {
+        for (List<int[]> prev : existSet)
+            if (contains(prev, points[0]) && contains(prev, points[1]) && contains(prev, points[2]))
+                return true;
+        return false;
+    }
+
+    static boolean contains(List<int[]> list, int[] p) {
+        for (int[] a : list)
+            if (a[0] == p[0] && a[1] == p[1])
+                return true;
+        return false;
     }
 
     private static class Pair<A, B> {
@@ -49,253 +214,6 @@ public class Bruteforce {
         }
 
         public Pair() {
-        }
-    }
-
-    private static class CustomBigInteger {
-        private final BigInteger value;
-
-        public CustomBigInteger(int value) {
-            this.value = new BigInteger(String.valueOf(value));
-        }
-
-
-        public CustomBigInteger(String value) {
-            this.value = new BigInteger(value);
-        }
-
-        public CustomBigInteger(long value) {
-            this.value = new BigInteger(String.valueOf(value));
-        }
-
-        public CustomBigInteger(CustomBigInteger value) {
-            this.value = new BigInteger(value.toString());
-        }
-
-        public CustomBigInteger(BigInteger value) {
-            this.value = new BigInteger(value.toString());
-        }
-
-        @Override
-        public String toString() {
-            return this.value.toString();
-        }
-
-        public int toInt() {
-            return Integer.parseInt(this.toString());
-        }
-
-        public boolean lessThan(CustomBigInteger value) {
-            return this.value.compareTo(value.value) < 0;
-        }
-
-        public boolean equal(CustomBigInteger value) {
-            return this.value.compareTo(value.value) == 0;
-        }
-
-        public boolean greaterThan(CustomBigInteger value) {
-            return this.value.compareTo(value.value) > 0;
-        }
-
-        public boolean greaterThanOrEqual(CustomBigInteger value) {
-            return this.greaterThan(value) || this.equal(value);
-        }
-
-        public boolean lessThanOrEqual(CustomBigInteger value) {
-            return this.lessThan(value) || this.equal(value);
-        }
-
-        public static CustomBigInteger max(CustomBigInteger a, CustomBigInteger b) {
-            if (a.greaterThan(b))
-                return a;
-            return b;
-        }
-
-        public static CustomBigInteger min(CustomBigInteger a, CustomBigInteger b) {
-            if (a.lessThan(b))
-                return a;
-            return b;
-        }
-
-        public CustomBigInteger add(String value) {
-            return new CustomBigInteger(
-                    this.value.add(
-                            new BigInteger(value)
-                    )
-            );
-        }
-
-        public CustomBigInteger add(int value) {
-            return new CustomBigInteger(
-                    this.value.add(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger add(CustomBigInteger value) {
-            return new CustomBigInteger(
-                    this.value.add(
-                            value.value
-                    )
-            );
-        }
-
-        public CustomBigInteger add(long value) {
-            return new CustomBigInteger(
-                    this.value.add(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger subtract(String value) {
-            return new CustomBigInteger(
-                    this.value.subtract(
-                            new BigInteger(value)
-                    )
-            );
-        }
-
-        public CustomBigInteger subtract(int value) {
-            return new CustomBigInteger(
-                    this.value.subtract(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger subtract(CustomBigInteger value) {
-            return new CustomBigInteger(
-                    this.value.subtract(
-                            value.value
-                    )
-            );
-        }
-
-        public CustomBigInteger subtract(long value) {
-            return new CustomBigInteger(
-                    this.value.subtract(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger mod(String value) {
-            return new CustomBigInteger(
-                    this.value.mod(
-                            new BigInteger(value)
-                    )
-            );
-        }
-
-        public CustomBigInteger mod(int value) {
-            return new CustomBigInteger(
-                    this.value.mod(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger mod(CustomBigInteger value) {
-            return new CustomBigInteger(
-                    this.value.mod(
-                            value.value
-                    )
-            );
-        }
-
-        public CustomBigInteger mod(long value) {
-            return new CustomBigInteger(
-                    this.value.mod(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger mul(String value) {
-            return new CustomBigInteger(
-                    this.value.multiply(
-                            new BigInteger(value)
-                    )
-            );
-        }
-
-        public CustomBigInteger mul(int value) {
-            return new CustomBigInteger(
-                    this.value.multiply(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger mul(CustomBigInteger value) {
-            return new CustomBigInteger(
-                    this.value.multiply(
-                            value.value
-                    )
-            );
-        }
-
-        public CustomBigInteger mul(long value) {
-            return new CustomBigInteger(
-                    this.value.multiply(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-
-        public CustomBigInteger div(String value) {
-            return new CustomBigInteger(
-                    this.value.divide(
-                            new BigInteger(value)
-                    )
-            );
-        }
-
-        public CustomBigInteger div(int value) {
-            return new CustomBigInteger(
-                    this.value.divide(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
-        }
-
-        public CustomBigInteger div(CustomBigInteger value) {
-            return new CustomBigInteger(
-                    this.value.divide(
-                            value.value
-                    )
-            );
-        }
-
-        public CustomBigInteger div(long value) {
-            return new CustomBigInteger(
-                    this.value.divide(
-                            new BigInteger(
-                                    String.valueOf(value)
-                            )
-                    )
-            );
         }
     }
 
