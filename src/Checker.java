@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class Checker {
     public static void main(String[] args) throws Exception {
-        int testCount = 20000;
+        int testCount = 10000;
         for (int i = 0; i < testCount; i++) {
             runTest();
             System.out.println("Test " + (i + 1) + " passed.");
@@ -14,16 +14,14 @@ public class Checker {
         TestGenerator.run();
         Solution.run();
         Bruteforce.run();
-        File bruteforcesOutputFile = new File(System.getProperty("user.dir") + "\\src\\_checker.bruteforces.out");
-        File solutionOutputFile = new File(System.getProperty("user.dir") + "\\src\\_checker.solution.out");
+        File bruteforcesOutputFile = new File("/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.bruteforces.out");
+        File solutionOutputFile = new File("/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.solution.out");
         Scanner bruteforcesScanner = new Scanner(bruteforcesOutputFile);
         Scanner solutionScanner = new Scanner(solutionOutputFile);
         check(bruteforcesScanner, solutionScanner);
     }
 
     private static void check(Scanner bruteforcesScanner, Scanner solutionScanner) throws Bug {
-        if (1 == 1)
-            return;
         int line = 1;
         while (bruteforcesScanner.hasNext()) {
             String bruteforcesResult = bruteforcesScanner.nextLine();

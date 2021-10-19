@@ -1,16 +1,18 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class TestGenerator {
-    private static final String checkerSolutionOutput = "D:\\Work\\work-space\\CP\\src\\_checker.solution.out";
-    private static final String checkerInput = "D:\\Work\\work-space\\CP\\src\\_checker.in";
-    private static final String checkerBruteforcesOutput = "D:\\Work\\work-space\\CP\\src\\_checker.bruteforces.out";
-    private static final String fileInput = "D:\\Work\\work-space\\CP\\src\\_in";
-    private static final String fileOutput = "D:\\Work\\work-space\\CP\\src\\_in";
+    private static final String checkerSolutionOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.solution.out";
+    private static final String checkerInput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.in";
+    private static final String checkerBruteforcesOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_checker.bruteforces.out";
+    private static final String fileInput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_in";
+    private static final String fileOutput = "/home/quanvda/Main/Projects/MyProject/java-competitive-programming/src/_out";
 
     private static class Config {
         static boolean useOutputFile = true;
-        static String outputFile = fileInput;
+        static String outputFile = checkerInput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -21,30 +23,26 @@ public class TestGenerator {
         BufferedWriter writer;
         writer = getWriter();
 
-        int t = rndInt(20000, 20000);
-        writer.write(t + "\n");
-        for (int v = 0; v < t; v++) {
-            // n
-            int n = rndInt(3, 7);
-            writer.write(n + "\n");
-            // for n
-            for (int i = 0; i < n; i++) {
-                // k
-                int k = rndInt(0, n - 1);
-                writer.write(k + " ");
-                // for k
-                for (int j = 0; j < k; j++) {
-                    // f
-                    int f = rndInt(1, n);
-                    while (f == i + 1)
-                        f = rndInt(1, n);
-                    writer.write(f + " ");
-                }
-                writer.write("\n");
-            }
+        int n = rndInt(20, 100);
+        writer.write(n + "\n");
+        List<int[]> exist = new ArrayList<>();
+        int l = -10000, r = 10000;
+        for (int i = 0; i < n; i++) {
+            int[] p = new int[]{rndInt(l, r), rndInt(l, r)};
+            while (isExist(exist, p))
+                p = new int[]{rndInt(l, r), rndInt(l, r)};
+            writer.write(p[0] + " " + p[1] + "\n");
+            exist.add(p);
         }
 
         writer.flush();
+    }
+
+    static boolean isExist(List<int[]> exist, int[] p) {
+        for (int[] b : exist)
+            if (b[0] == p[0] && b[1] == p[1])
+                return true;
+        return false;
     }
 
     private static char rndChar() {

@@ -1,8 +1,6 @@
-import java.awt.*;
 import java.io.*;
 import java.math.BigInteger;
-import java.util.*;
-import java.util.List;
+import java.util.StringTokenizer;
 
 public class Solution {
 
@@ -26,179 +24,283 @@ public class Solution {
     public static void run() throws Exception {
         FastScanner sc = new FastScanner();
         int t = 1;
+        t = sc.nextInt();
         BufferedWriter writer = getWriter();
         for (int i = 0; i < t; i++)
             solve(sc, writer);
         writer.flush();
     }
 
+
     private static void solve(FastScanner sc, BufferedWriter writer) throws Exception {
         int n = sc.nextInt();
-        List<Pair<Integer, Integer>> points = new ArrayList<>();
-        for (int i = 0; i < n; i++)
-            points.add(new Pair<>(sc.nextInt(), sc.nextInt()));
-        // save points on each vertical
-        Map<Integer, List<Pair<Integer, Integer>>> verticalSet = new HashMap<>();
-        Map<Integer, List<Pair<Integer, Integer>>> horizontalSet = new HashMap<>();
-        for (Pair<Integer, Integer> p : points) {
-            verticalSet.put(p.first, new ArrayList<>());
-            horizontalSet.put(p.second, new ArrayList<>());
+        int top[] = new int[n + 1];
+        int dif[] = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            top[i] = sc.nextInt();
+            dif[i] = sc.nextInt();
         }
-        for (Pair<Integer, Integer> p : points) {
-            verticalSet.get(p.first).add(p);
-            horizontalSet.get(p.second).add(p);
+        int topCnt[] = new int[n + 1];
+        int difCnt[] = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            topCnt[top[i]]++;
+            difCnt[dif[i]]++;
         }
-        // sort points by height on each vertical
-        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : verticalSet.entrySet())
-            entry.getValue().sort(Comparator.comparingInt(x -> x.second));
-        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : horizontalSet.entrySet())
-            entry.getValue().sort(Comparator.comparingInt(x -> x.first));
-        // for checking if point exist
-        Map<Integer, Set<Integer>> existSet = new HashMap<>();
-        for (Pair<Integer, Integer> p : points)
-            existSet.put(p.first, new HashSet<>());
-        for (Pair<Integer, Integer> p : points)
-            existSet.get(p.first).add(p.second);
-        // find rising cross and decreasing cross of each point
-        Map<Integer, List<Pair<Integer, Integer>>> risingCrossSet = new HashMap<>();
-        Map<Integer, List<Pair<Integer, Integer>>> decreasingCrossSet = new HashMap<>();
-        for (Pair<Integer, Integer> p : points) {
-            // rising
-            int risingCross = findRisingCross(p);
-            List<Pair<Integer, Integer>> risingNeighbors = risingCrossSet.getOrDefault(risingCross, new ArrayList<>());
-            risingNeighbors.add(p);
-            risingCrossSet.put(risingCross, risingNeighbors);
-            // decreasing
-            int decreasingCross = findDecreasingCross(p);
-            List<Pair<Integer, Integer>> decreasingNeighbors = decreasingCrossSet.getOrDefault(decreasingCross, new ArrayList<>());
-            decreasingNeighbors.add(p);
-            decreasingCrossSet.put(decreasingCross, decreasingNeighbors);
-        }
-        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : risingCrossSet.entrySet())
-            entry.getValue().sort(Comparator.comparingInt(x -> x.first));
-        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : decreasingCrossSet.entrySet())
-            entry.getValue().sort(Comparator.comparingInt(x -> x.second));
-        // caculate for each pair on a vertical
-        int ans = 0;
-        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : verticalSet.entrySet()) {
-            for (int i = 0; i < entry.getValue().size() - 1; i++) {
-                Pair<Integer, Integer> fir = entry.getValue().get(i);
-                Pair<Integer, Integer> sec = entry.getValue().get(i + 1);
-                List<Pair<Integer, Integer>> thirds = generateThirdPoints(fir, sec);
-                for (Pair<Integer, Integer> thir : thirds) {
-                    if (exist(existSet, thir)) {
-                        // check if there are any other point on line fir -> thir and sec -> thir
-                        if (validLine(horizontalSet, risingCrossSet, decreasingCrossSet, fir, thir)
-                                && validLine(horizontalSet, risingCrossSet, decreasingCrossSet, sec, thir)) {
-                            ans++;
-                        }
-                    }
-                }
-            }
-        }
-        for (Map.Entry<Integer, List<Pair<Integer, Integer>>> entry : horizontalSet.entrySet()) {
-            for (int i = 0; i < entry.getValue().size() - 1; i++) {
-                Pair<Integer, Integer> fir = entry.getValue().get(i);
-                Pair<Integer, Integer> sec = entry.getValue().get(i + 1);
-                List<Pair<Integer, Integer>> thirds = new ArrayList<>();
-                int diff = sec.first - fir.first;
-                if (diff % 2 == 0) {
-                    int half = diff / 2;
-                    thirds.add(new Pair<>(fir.first + half, fir.second + half));
-                    thirds.add(new Pair<>(fir.first + half, fir.second - half));
-                }
-                for (Pair<Integer, Integer> thir : thirds) {
-                    if (exist(existSet, thir)) {
-                        // check if there are any other point on line fir -> thir and sec -> thir
-                        if (validLine(horizontalSet, risingCrossSet, decreasingCrossSet, fir, thir)
-                                && validLine(horizontalSet, risingCrossSet, decreasingCrossSet, sec, thir)) {
-                            ans++;
-                        }
-                    }
-                }
-            }
-        }
-        writer.write(ans + "");
+        long tot = n * 1L * (n - 1) * 1L * (n - 2) * 1L / 6;
+        long bad = 0;
+        for (int i = 1; i <= n; i++)
+            bad += (topCnt[top[i]] - 1) * 1L * (difCnt[dif[i]] - 1) * 1L;
+        writer.write((tot - bad) + "\n");
     }
 
-    static boolean validLine(Map<Integer, List<Pair<Integer, Integer>>> horizontalSet,
-                             Map<Integer, List<Pair<Integer, Integer>>> risingCrossSet,
-                             Map<Integer, List<Pair<Integer, Integer>>> decreasingCrossSet,
-                             Pair<Integer, Integer> fir, Pair<Integer, Integer> sec) {
-        if (fir.second == sec.second) {
-            List<Pair<Integer, Integer>> set = horizontalSet.get(fir.second);
-            int firstIndex = Collections.binarySearch(set, fir, (x, y) -> {
-                if (x.first < y.first) return -1;
-                if (x.first > y.first) return 1;
-                return 0;
-            });
-            if (fir.first < sec.first)
-                return eq(set.get(firstIndex + 1), sec);
-            return eq(set.get(firstIndex - 1), sec);
+
+    private static class CustomBigInteger {
+        private final BigInteger value;
+
+        public CustomBigInteger(int value) {
+            this.value = new BigInteger(String.valueOf(value));
         }
-        if (fir.first < sec.first && fir.second < sec.second
-                || fir.first > sec.first && fir.second > sec.second) {
-            int rising = findRisingCross(fir);
-            List<Pair<Integer, Integer>> set = risingCrossSet.get(rising);
-            int firstIndex = Collections.binarySearch(set, fir, (x, y) -> {
-                if (x.first < y.first) return -1;
-                if (x.first > y.first) return 1;
-                return 0;
-            });
-            if (fir.first < sec.first)
-                return eq(set.get(firstIndex + 1), sec);
-            return eq(set.get(firstIndex - 1), sec);
+
+
+        public CustomBigInteger(String value) {
+            this.value = new BigInteger(value);
         }
-        int decreasing = findDecreasingCross(fir);
-        List<Pair<Integer, Integer>> set = decreasingCrossSet.get(decreasing);
-        int firstIndex = Collections.binarySearch(set, fir, (x, y) -> {
-            if (x.second < y.second) return -1;
-            if (x.second > y.second) return 1;
-            return 0;
-        });
-        if (fir.second < sec.second)
-            return eq(set.get(firstIndex + 1), sec);
-        return eq(set.get(firstIndex - 1), sec);
+
+        public CustomBigInteger(long value) {
+            this.value = new BigInteger(String.valueOf(value));
+        }
+
+        public CustomBigInteger(CustomBigInteger value) {
+            this.value = new BigInteger(value.toString());
+        }
+
+        public CustomBigInteger(BigInteger value) {
+            this.value = new BigInteger(value.toString());
+        }
+
+        @Override
+        public String toString() {
+            return this.value.toString();
+        }
+
+        public int toInt() {
+            return Integer.parseInt(this.toString());
+        }
+
+        public boolean lessThan(CustomBigInteger value) {
+            return this.value.compareTo(value.value) < 0;
+        }
+
+        public boolean equal(CustomBigInteger value) {
+            return this.value.compareTo(value.value) == 0;
+        }
+
+        public boolean greaterThan(CustomBigInteger value) {
+            return this.value.compareTo(value.value) > 0;
+        }
+
+        public boolean greaterThanOrEqual(CustomBigInteger value) {
+            return this.greaterThan(value) || this.equal(value);
+        }
+
+        public boolean lessThanOrEqual(CustomBigInteger value) {
+            return this.lessThan(value) || this.equal(value);
+        }
+
+        public static CustomBigInteger max(CustomBigInteger a, CustomBigInteger b) {
+            if (a.greaterThan(b))
+                return a;
+            return b;
+        }
+
+        public static CustomBigInteger min(CustomBigInteger a, CustomBigInteger b) {
+            if (a.lessThan(b))
+                return a;
+            return b;
+        }
+
+        public CustomBigInteger add(String value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger add(int value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger add(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger add(long value) {
+            return new CustomBigInteger(
+                    this.value.add(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(String value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(int value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger subtract(long value) {
+            return new CustomBigInteger(
+                    this.value.subtract(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(String value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(int value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mod(long value) {
+            return new CustomBigInteger(
+                    this.value.mod(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(String value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(int value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger mul(long value) {
+            return new CustomBigInteger(
+                    this.value.multiply(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+
+        public CustomBigInteger div(String value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(value)
+                    )
+            );
+        }
+
+        public CustomBigInteger div(int value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
+
+        public CustomBigInteger div(CustomBigInteger value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            value.value
+                    )
+            );
+        }
+
+        public CustomBigInteger div(long value) {
+            return new CustomBigInteger(
+                    this.value.divide(
+                            new BigInteger(
+                                    String.valueOf(value)
+                            )
+                    )
+            );
+        }
     }
 
-    static boolean eq(Pair<Integer, Integer> first, Pair<Integer, Integer> second) {
-        return first.first == second.first && first.second == second.second;
-    }
-
-    static int findRisingCross(Pair<Integer, Integer> point) {
-        Pair<Integer, Integer> next = new Pair<>(point.first + 1, point.second + 1);
-        int a = next.second - point.second;
-        int b = point.first - next.first;
-        int c = a * (point.first) + b * (point.second);
-        return c / a;
-    }
-
-    static int findDecreasingCross(Pair<Integer, Integer> point) {
-        Pair<Integer, Integer> next = new Pair<>(point.first - 1, point.second + 1);
-        int a = next.second - point.second;
-        int b = point.first - next.first;
-        int c = a * (point.first) + b * (point.second);
-        return c / a;
-    }
-
-    static boolean exist(Map<Integer, Set<Integer>> existSet, Pair<Integer, Integer> point) {
-        if (!existSet.containsKey(point.first)) return false;
-        return existSet.get(point.first).contains(point.second);
-    }
-
-    static List<Pair<Integer, Integer>> generateThirdPoints(Pair<Integer, Integer> fir, Pair<Integer, Integer> sec) {
-        List<Pair<Integer, Integer>> result = new ArrayList<>();
-        int dist = sec.second - fir.second;
-        result.add(new Pair<>(sec.first + dist, sec.second));
-        result.add(new Pair<>(fir.first + dist, fir.second));
-        result.add(new Pair<>(sec.first - dist, sec.second));
-        result.add(new Pair<>(fir.first - dist, fir.second));
-        if (dist % 2 != 0) return result;
-        int half = dist / 2;
-        result.add(new Pair<>(fir.first + half, fir.second + half));
-        result.add(new Pair<>(fir.first - half, fir.second + half));
-        return result;
-    }
 
     private static class Pair<A, B> {
         A first;

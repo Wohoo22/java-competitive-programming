@@ -14,9 +14,9 @@ public class Bruteforce {
 
     private static class Config {
         private static final boolean useInputFile = true;
-        private static final boolean useOutputFile = false;
-        private static final String inputFile = fileInput;
-        private static final String outputFile = checkerSolutionOutput;
+        private static final boolean useOutputFile = true;
+        private static final String inputFile = checkerInput;
+        private static final String outputFile = checkerBruteforcesOutput;
     }
 
     public static void main(String[] args) throws Exception {
@@ -73,60 +73,46 @@ public class Bruteforce {
                         2, 0, "F"
                 },
         };
-        for (Map.Entry<Integer, List<int[]>> entry : xSet.entrySet()) {
-            entry.getValue().sort(Comparator.comparingInt(x -> x[1]));
-            for (int i = 0; i < entry.getValue().size() - 1; i++) {
-                int[] fir = entry.getValue().get(i);
-                int[] sec = entry.getValue().get(i + 1);
+        for (int[] fir : points) {
+            for (int[] sec : points) {
                 for (int[] thir : points) {
-                    if (!thir.equals(fir) && !thir.equals(sec)
-                            && !exist(existSet, fir, sec, thir)
-                            && validTri(fir, sec, thir)
-                            && !hasPointBtw(fir, thir, points)
-                            && !hasPointBtw(sec, thir, points)) {
-                        ans++;
-                        existSet.add(Arrays.asList(fir, sec, thir));
-//                        System.out.println("OK " + str(fir, map) + str(sec, map) + str(thir, map));
-                    } else {
-//                        System.out.println("Not OK " + str(fir, map) + str(sec, map) + str(thir, map));
-                    }
-                }
-            }
-        }
-//        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        for (Map.Entry<Integer, List<int[]>> entry : ySet.entrySet()) {
-            entry.getValue().sort(Comparator.comparingInt(x -> x[0]));
-            for (int i = 0; i < entry.getValue().size() - 1; i++) {
-                int[] fir = entry.getValue().get(i);
-                int[] sec = entry.getValue().get(i + 1);
-                for (int[] thir : points) {
-                    if (!thir.equals(fir) && !thir.equals(sec)
-                            && !exist(existSet, fir, sec, thir)
-                            && validTri(fir, sec, thir)
-                            && !hasPointBtw(fir, thir, points)
-                            && !hasPointBtw(sec, thir, points)) {
-                        ans++;
-                        existSet.add(Arrays.asList(fir, sec, thir));
-//                        System.out.println("OK " + str(fir, map) + str(sec, map) + str(thir, map));
-                    } else {
-//                        System.out.println("Not OK " + str(fir, map) + str(sec, map) + str(thir, map));
+                    if (!fir.equals(sec) && !fir.equals(thir) && !sec.equals(thir)) {
+                        if (!exist(existSet, fir, sec, thir)
+                                && validTri(fir, sec, thir)
+                                && !hasPointBtw(fir, thir, points)
+                                && !hasPointBtw(sec, thir, points)
+                                && !hasPointBtw(fir, sec, points)
+                                && ss(fir, sec, thir)) {
+                            ans++;
+                            existSet.add(Arrays.asList(fir, sec, thir));
+                            System.out.println("First " + fir[0] + "," + fir[1]
+                                    + " Second " + sec[0] + "," + sec[1] + " Third " + thir[0] + "," + thir[1]);
+                        }
                     }
                 }
             }
         }
         writer.write(ans + "");
-        // C B E
-//        check(new int[]{0, 0}, new int[]{0, 1}, new int[]{1, 0}, points);
     }
 
-    static void check(int[] fir, int[] sec, int[] thir, List<int[]> points) {
-        System.out.println("### CHECK");
-        if (!validTri(fir, sec, thir))
-            System.out.println("NOT VALID TRIANGLE");
-        if (hasPointBtw(fir, thir, points))
-            System.out.println("Has point between first and third");
-        if (hasPointBtw(sec, thir, points))
-            System.out.println("Has point between second and third");
+    static boolean ss(int[] fir, int[] sec, int[] thir) {
+        return parallel(fir, sec) || parallel(fir, thir) || parallel(sec, thir);
+    }
+
+    static boolean parallel(int[]... a) {
+        boolean x = true, y = true;
+        for (int i = 0; i < a.length - 1; i++) {
+            if (a[i][0] != a[i + 1][0])
+                x = false;
+            if (a[i][1] != a[i + 1][1])
+                y = false;
+        }
+        if (x)
+            return true;
+        else if (y)
+            return true;
+        else
+            return false;
     }
 
     static String str(int[] p, Object[][] map) {
